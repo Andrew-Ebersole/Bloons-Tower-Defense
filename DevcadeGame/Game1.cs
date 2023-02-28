@@ -3,13 +3,40 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Devcade;
 
+// Andrew Ebersole
+// 2.28.23
+// Bloons Tower Defense
+
 namespace DevcadeGame
 {
 	public class Game1 : Game
 	{
-		private GraphicsDeviceManager _graphics;
+        #region fields
+        private GraphicsDeviceManager _graphics;
 		private SpriteBatch _spriteBatch;
 
+		// GameState
+		private enum GameState
+        {
+			Menu,
+			Game,
+			GameOver,
+			Instructions,
+			Credits
+        }
+		GameState gameState;
+
+		// Window size
+		private int windowWidth;
+		private int windowHeight;
+		private int windowTileSize;
+
+		// Game Fields
+		private int round;
+		private int money;
+		private int lives;
+
+		#endregion
 		/// <summary>
 		/// Game constructor
 		/// </summary>
@@ -40,8 +67,11 @@ namespace DevcadeGame
 #endif
 			#endregion
 			
-			// TODO: Add your initialization logic here
+			windowHeight = _graphics.PreferredBackBufferHeight;
+			windowWidth = _graphics.PreferredBackBufferWidth;
+			windowTileSize = windowWidth / 15;
 
+			gameState = GameState.Menu;
 			base.Initialize();
 		}
 
