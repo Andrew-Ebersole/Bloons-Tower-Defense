@@ -36,6 +36,10 @@ namespace DevcadeGame
 		private int money;
 		private int lives;
 
+		// Game Manager
+		ContentManager contentManager;
+		MonkeyManager monkeyManager;
+
 		#endregion
 		/// <summary>
 		/// Game constructor
@@ -82,9 +86,7 @@ namespace DevcadeGame
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			// TODO: use this.Content to load your game content here
-			// ex.
-			// texture = Content.Load<Texture2D>("fileNameWithoutExtention");
+			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
 		}
 
 		/// <summary>

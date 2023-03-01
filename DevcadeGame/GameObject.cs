@@ -57,7 +57,7 @@ namespace DevcadeGame
 
         // --- Methods --- //
 
-        public virtual void Update(GameTime gameTime, int windowWidth)
+        public virtual void Update(GameTime gameTime, Rectangle windowDimensions)
         {
         }
 
