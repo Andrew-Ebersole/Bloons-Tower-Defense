@@ -37,8 +37,10 @@ namespace DevcadeGame
 		private int lives;
 
 		// Game Manager
-		ContentManager contentManager;
-		MonkeyManager monkeyManager;
+		private ContentManager contentManager;
+		private MonkeyManager monkeyManager;
+
+		// Textures
 
 		#endregion
 		/// <summary>
@@ -73,7 +75,7 @@ namespace DevcadeGame
 			
 			windowHeight = _graphics.PreferredBackBufferHeight;
 			windowWidth = _graphics.PreferredBackBufferWidth;
-			windowTileSize = windowWidth / 15;
+			windowTileSize = windowWidth / 12;
 
 			gameState = GameState.Menu;
 			base.Initialize();
@@ -85,7 +87,7 @@ namespace DevcadeGame
 		protected override void LoadContent()
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
-
+	
 			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
 		}
 
@@ -121,7 +123,9 @@ namespace DevcadeGame
 			GraphicsDevice.Clear(Color.CornflowerBlue);
 
 			_spriteBatch.Begin();
-			// TODO: Add your drawing code here
+
+			contentManager.Draw(_spriteBatch);
+
 			_spriteBatch.End();
 
 			base.Draw(gameTime);

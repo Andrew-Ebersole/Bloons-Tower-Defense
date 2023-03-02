@@ -55,10 +55,5 @@ internal class MonkeyManager
             }
         }
 
-        public bool addMonkey(monkeyType mtype, int x, int y)
-        {
-            if ()
-            return true;
-        }
     }
 }
