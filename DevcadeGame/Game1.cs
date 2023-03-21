@@ -39,6 +39,7 @@ namespace DevcadeGame
 		// Game Manager
 		private ContentManager contentManager;
 		private MonkeyManager monkeyManager;
+		private BalloonManager balloonManager;
 
 		// Textures
 
@@ -89,13 +90,18 @@ namespace DevcadeGame
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 	
 			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
-		}
 
-		/// <summary>
-		/// Your main update loop. This runs once every frame, over and over.
-		/// </summary>
-		/// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
-		protected override void Update(GameTime gameTime)
+            balloonManager = new BalloonManager(new Rectangle(0,0,
+				windowTileSize,windowTileSize),
+				Content.Load<Texture2D>("testBalloon"));
+
+        }
+
+        /// <summary>
+        /// Your main update loop. This runs once every frame, over and over.
+        /// </summary>
+        /// <param name="gameTime">This is the gameTime object you can use to get the time since last frame.</param>
+        protected override void Update(GameTime gameTime)
 		{
 			Input.Update(); // Updates the state of the input library
 
