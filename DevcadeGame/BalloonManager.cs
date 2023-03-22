@@ -42,10 +42,12 @@ namespace DevcadeGame
 
         public BalloonManager(Rectangle tileSize,Texture2D balloons)
         {
+            this.balloons = new List<Balloons>();
             this.tileSize = tileSize;
             previousKB = new KeyboardState();
             currentKB = new KeyboardState();
             balloonTexture = balloons;
+            initilizePath();
         }
 
 
@@ -62,8 +64,8 @@ namespace DevcadeGame
                     balloonTexture,
                     0,
                     0,
-                    50,
-                    50,
+                    30,
+                    30,
                     1,
                     10,
                     Map1path));
@@ -88,26 +90,30 @@ namespace DevcadeGame
         private void initilizePath()
         {
             // HARD CODE, YEAH!
-            Map1path.Add(new Vector2(tileSize.X * 2.5f, tileSize.Y *-0.5f));
-            Map1path.Add(new Vector2(tileSize.X * 2.5f, tileSize.Y * 6.5f));
-            Map1path.Add(new Vector2(tileSize.X * 4.5f, tileSize.Y * 6.5f));
-            Map1path.Add(new Vector2(tileSize.X * 4.5f, tileSize.Y * 3.5f));
-            Map1path.Add(new Vector2(tileSize.X * 8.5f, tileSize.Y * 3.5f));
-            Map1path.Add(new Vector2(tileSize.X * 8.5f, tileSize.Y * 1.5f));
-            Map1path.Add(new Vector2(tileSize.X * 8.5f, tileSize.Y * 6.5f));
-            Map1path.Add(new Vector2(tileSize.X * 5.5f, tileSize.Y * 6.5f));
-            Map1path.Add(new Vector2(tileSize.X * 5.5f, tileSize.Y * 9.5f));
-            Map1path.Add(new Vector2(tileSize.X * 6.5f, tileSize.Y * 9.5f));
-            Map1path.Add(new Vector2(tileSize.X * 6.5f, tileSize.Y * 12.5f));
-            Map1path.Add(new Vector2(tileSize.X * 9.5f, tileSize.Y * 12.5f));
-            Map1path.Add(new Vector2(tileSize.X * 9.5f, tileSize.Y * 17.5f));
-            Map1path.Add(new Vector2(tileSize.X * 7.5f, tileSize.Y * 17.5f));
-            Map1path.Add(new Vector2(tileSize.X * 7.5f, tileSize.Y * 15.5f));
-            Map1path.Add(new Vector2(tileSize.X * 2.5f, tileSize.Y * 15.5f));
-            Map1path.Add(new Vector2(tileSize.X * 2.5f, tileSize.Y * 19.5f));
-            Map1path.Add(new Vector2(tileSize.X * 7.5f, tileSize.Y * 19.5f));
-            Map1path.Add(new Vector2(tileSize.X * 7.5f, tileSize.Y * 22.5f));
-            Map1path.Add(new Vector2(tileSize.X * 12.5f, tileSize.Y * 22.5f));
+            Map1path = new List<Vector2>
+            {
+                new Vector2(tileSize.X * 2.5f, tileSize.Y * -0.5f),
+                new Vector2(tileSize.X * 2.5f, tileSize.Y * 6.5f),
+                new Vector2(tileSize.X * 4.5f, tileSize.Y * 6.5f),
+                new Vector2(tileSize.X * 4.5f, tileSize.Y * 3.5f),
+                new Vector2(tileSize.X * 8.5f, tileSize.Y * 3.5f),
+                new Vector2(tileSize.X * 8.5f, tileSize.Y * 1.5f),
+                new Vector2(tileSize.X * 10.5f, tileSize.Y * 1.5f),
+                new Vector2(tileSize.X * 10.5f, tileSize.Y * 6.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 6.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 9.5f),
+                new Vector2(tileSize.X * 5.5f, tileSize.Y * 9.5f),
+                new Vector2(tileSize.X * 5.5f, tileSize.Y * 12.5f),
+                new Vector2(tileSize.X * 9.5f, tileSize.Y * 12.5f),
+                new Vector2(tileSize.X * 9.5f, tileSize.Y * 17.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 17.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 15.5f),
+                new Vector2(tileSize.X * 2.5f, tileSize.Y * 15.5f),
+                new Vector2(tileSize.X * 2.5f, tileSize.Y * 19.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 19.5f),
+                new Vector2(tileSize.X * 7.5f, tileSize.Y * 22.5f),
+                new Vector2(tileSize.X * 13.5f, tileSize.Y * 22.5f)
+            };
         }
     }
 }

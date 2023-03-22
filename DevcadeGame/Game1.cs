@@ -91,7 +91,7 @@ namespace DevcadeGame
 	
 			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
 
-            balloonManager = new BalloonManager(new Rectangle(0,0,
+            balloonManager = new BalloonManager(new Rectangle(windowTileSize,windowTileSize,
 				windowTileSize,windowTileSize),
 				Content.Load<Texture2D>("testBalloon"));
 
@@ -115,6 +115,7 @@ namespace DevcadeGame
 				Exit();
 			}
 
+			balloonManager.Update(gameTime, new Rectangle(0,0,0,0));
 			// TODO: Add your update logic here
 
 			base.Update(gameTime);
@@ -131,6 +132,8 @@ namespace DevcadeGame
 			_spriteBatch.Begin();
 
 			contentManager.Draw(_spriteBatch);
+
+			balloonManager.Draw(_spriteBatch);
 
 			_spriteBatch.End();
 
