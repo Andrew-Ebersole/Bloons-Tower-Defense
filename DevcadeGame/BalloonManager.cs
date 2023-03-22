@@ -58,16 +58,32 @@ namespace DevcadeGame
         {
             currentKB = Keyboard.GetState();
 
-            if (currentKB.IsKeyDown(Keys.Space) && previousKB.IsKeyUp(Keys.Space))
+            if (currentKB.IsKeyDown(Keys.D1) && previousKB.IsKeyUp(Keys.D1))
             {
                 balloons.Add(new Balloons(
-                    balloonTexture,
-                    0,
-                    0,
-                    30,
-                    30,
+                    balloonTexture,0,0,30,30,
                     1,
-                    10,
+                    Map1path));
+            }
+            if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
+            {
+                balloons.Add(new Balloons(
+                    balloonTexture, 0, 0, 30, 30,
+                    2,
+                    Map1path));
+            }
+            if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
+            {
+                balloons.Add(new Balloons(
+                    balloonTexture, 0, 0, 30, 30,
+                    3,
+                    Map1path));
+            }
+            if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
+            {
+                balloons.Add(new Balloons(
+                    balloonTexture, 0, 0, 30, 30,
+                    4,
                     Map1path));
             }
 

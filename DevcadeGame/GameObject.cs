@@ -15,6 +15,7 @@ namespace DevcadeGame
 
         protected Texture2D texture;
         protected Rectangle rectangle;
+        protected Vector2 position;
 
 
 
@@ -23,12 +24,7 @@ namespace DevcadeGame
         /// <summary>
         /// returns x position of the game object
         /// </summary>
-        public int X { get { return rectangle.X; } set { rectangle.X = value; } }
-
-        /// <summary>
-        /// returns the y position of the game object
-        /// </summary>
-        public int Y { get { return rectangle.Y; } set { rectangle.Y = value; } }
+        public Vector2 Position { get { return position; } set {position = value; } }
 
         /// <summary>
         /// returns the rectangle the game object resides in
@@ -50,7 +46,8 @@ namespace DevcadeGame
         public GameObject(Texture2D texture, int x, int y, int width, int height)
         {
             this.texture = texture;
-            rectangle = new Rectangle(x, y, width, height);
+            position = new Vector2(x, y);
+            rectangle = new Rectangle((int)position.X, (int)position.Y, width, height);
         }
 
 
@@ -63,6 +60,7 @@ namespace DevcadeGame
 
         public virtual void Draw(SpriteBatch sb)
         {
+            rectangle = new Rectangle((int)position.X, (int)position.Y, rectangle.Width, rectangle.Height);
             sb.Draw(
                 texture,        // Image
                 rectangle,      // Rectangle
