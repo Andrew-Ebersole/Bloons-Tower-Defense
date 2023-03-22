@@ -41,7 +41,8 @@ namespace DevcadeGame
 		private MonkeyManager monkeyManager;
 		private BalloonManager balloonManager;
 
-		// Textures
+		// Fonts
+		private SpriteFont testFont;
 
 		#endregion
 		/// <summary>
@@ -78,8 +79,13 @@ namespace DevcadeGame
 			windowWidth = _graphics.PreferredBackBufferWidth;
 			windowTileSize = windowWidth / 12;
 
+			// Font
+			testFont = Content.Load<SpriteFont>("testFont");
+
 			gameState = GameState.Menu;
 			base.Initialize();
+
+			StartGame();
 		}
 
 		/// <summary>
@@ -135,9 +141,29 @@ namespace DevcadeGame
 
 			balloonManager.Draw(_spriteBatch);
 
+			DrawText(_spriteBatch);
+
 			_spriteBatch.End();
 
 			base.Draw(gameTime);
+		}
+
+		public void DrawText(SpriteBatch sb)
+		{
+			sb.DrawString(
+				testFont,
+				$"${money}" +
+				$"\nRound: {round}" +
+				$"\nLives: {lives}",
+				new Vector2(10,10),
+				Color.White);
+		}
+
+		private void StartGame()
+		{
+			money = 700;
+			lives = 100;
+			round = 0;
 		}
 	}
 }

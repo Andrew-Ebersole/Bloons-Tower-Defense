@@ -86,6 +86,13 @@ namespace DevcadeGame
                     4,
                     Map1path));
             }
+            if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
+            {
+                balloons.Add(new Balloons(
+                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
+                    5,
+                    Map1path));
+            }
 
             foreach (Balloons b in balloons)
             {

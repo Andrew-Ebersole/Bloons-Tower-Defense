@@ -89,17 +89,21 @@ namespace DevcadeGame
 
                 case 2:
                     tint = Color.Blue;
-                    speed = 1.2f * windowDimensions.Width / 420;
+                    speed = 1.4f * windowDimensions.Width / 420;
                     break;
 
                 case 3:
                     tint = Color.Green;
-                    speed = 1.4f * windowDimensions.Width / 420;
+                    speed = 1.8f * windowDimensions.Width / 420;
                     break;
 
                 case 4:
                     tint = Color.Yellow;
-                    speed = 1.6f * windowDimensions.Width / 420;
+                    speed = 3.2f * windowDimensions.Width / 420;
+                    break;
+                case 5:
+                    tint = Color.Pink;
+                    speed = 3.5f * windowDimensions.Width / 420;
                     break;
             }
         }
