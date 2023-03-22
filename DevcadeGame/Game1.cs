@@ -115,7 +115,7 @@ namespace DevcadeGame
 				Exit();
 			}
 
-			balloonManager.Update(gameTime, new Rectangle(0,0,0,0));
+			balloonManager.Update(gameTime, new Rectangle(0,0,windowWidth,windowHeight));
 			// TODO: Add your update logic here
 
 			base.Update(gameTime);
