@@ -4,12 +4,15 @@ using Microsoft.Xna.Framework.Input;
 using Devcade;
 
 // Andrew Ebersole
-// 2.28.23
+// Started 2.28.23
 // Bloons Tower Defense
 
 namespace DevcadeGame
 {
-	public class Game1 : Game
+    // Delegates
+    public delegate void TakeDamage(int damage);
+
+    public class Game1 : Game
 	{
         #region fields
         private GraphicsDeviceManager _graphics;
@@ -26,6 +29,10 @@ namespace DevcadeGame
         }
 		GameState gameState;
 
+		// Keyboard Input
+		private KeyboardState currentKB;
+		private KeyboardState previousKB;
+
 		// Window size
 		private int windowWidth;
 		private int windowHeight;
@@ -40,9 +47,11 @@ namespace DevcadeGame
 		private ContentManager contentManager;
 		private MonkeyManager monkeyManager;
 		private BalloonManager balloonManager;
-
+		
 		// Fonts
 		private SpriteFont testFont;
+
+		
 
 		#endregion
 		/// <summary>
@@ -83,6 +92,10 @@ namespace DevcadeGame
 			testFont = Content.Load<SpriteFont>("testFont");
 
 			gameState = GameState.Menu;
+
+			currentKB = new KeyboardState();
+			previousKB = new KeyboardState();
+
 			base.Initialize();
 
 			StartGame();
@@ -101,6 +114,7 @@ namespace DevcadeGame
 				windowTileSize,windowTileSize),
 				Content.Load<Texture2D>("defaultBloon"));
 
+			balloonManager.takeDamage += LoseHealth;
         }
 
         /// <summary>
@@ -120,10 +134,39 @@ namespace DevcadeGame
 			{
 				Exit();
 			}
+			currentKB = Keyboard.GetState();
 
-			balloonManager.Update(gameTime, new Rectangle(0,0,windowWidth,windowHeight));
-			// TODO: Add your update logic here
+			switch (gameState)
+			{
+				case GameState.Menu:
+					if (singleKeyPress(Keys.Enter))
+					{
+						StartGame();
+						gameState = GameState.Game;
+					}
+					break;
 
+				case GameState.Game:
+                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
+					if (lives <= 0)
+					{
+						gameState = GameState.GameOver;
+					}
+                    if (singleKeyPress(Keys.Enter))
+                    {
+                        gameState = GameState.GameOver;
+                    }
+                    break;
+
+				case GameState.GameOver:
+                    if (singleKeyPress(Keys.Enter))
+                    {
+                        gameState = GameState.Menu;
+                    }
+                    break;
+			}
+
+			previousKB = Keyboard.GetState();
 			base.Update(gameTime);
 		}
 
@@ -137,11 +180,35 @@ namespace DevcadeGame
 
 			_spriteBatch.Begin();
 
-			contentManager.Draw(_spriteBatch);
+			switch (gameState)
+			{
+				case GameState.Menu:
+					_spriteBatch.DrawString(
+						testFont,
+						"Press enter to start game",
+						new Vector2(1, 1),
+						Color.Black);
 
-			balloonManager.Draw(_spriteBatch);
+					break;
+				case GameState.Game:
+                    contentManager.Draw(_spriteBatch);
+                    balloonManager.Draw(_spriteBatch);
+                    DrawText(_spriteBatch);
+                    break;
 
-			DrawText(_spriteBatch);
+				case GameState.GameOver:
+                    contentManager.Draw(_spriteBatch);
+                    balloonManager.Draw(_spriteBatch);
+                    DrawText(_spriteBatch);
+					_spriteBatch.DrawString(
+						testFont,
+						"GAME OVER!",
+						new Vector2(windowWidth * 0.2f, windowHeight * 0.4f),
+						Color.Red);
+                    break;
+			}
+			
+
 
 			_spriteBatch.End();
 
@@ -155,8 +222,8 @@ namespace DevcadeGame
 				$"${money}" +
 				$"\nRound: {round}" +
 				$"\nLives: {lives}",
-				new Vector2(10,10),
-				Color.White);
+				new Vector2(windowTileSize*3.2f,windowTileSize*0.1f),
+				Color.LightGoldenrodYellow);
 		}
 
 		private void StartGame()
@@ -164,6 +231,21 @@ namespace DevcadeGame
 			money = 700;
 			lives = 100;
 			round = 0;
+			balloonManager.RemoveAllBalloons(); 
 		}
-	}
+
+        public void LoseHealth(int damage)
+        {
+			lives -= damage;
+        }
+
+		public bool singleKeyPress(Keys key)
+		{
+			if (currentKB.IsKeyDown(key) && previousKB.IsKeyUp(key))
+			{
+				return true;
+			}
+			return false;
+		}
+    }
 }

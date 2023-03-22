@@ -20,6 +20,7 @@ namespace DevcadeGame
         private List<Vector2> path;
         private int pathNum;
         private Color tint;
+        public event TakeDamage takeDamage;
 
 
 
@@ -73,6 +74,12 @@ namespace DevcadeGame
                 {
                     pathNum++;
                 }
+            }
+            
+            if (pathNum == path.Count)
+            {
+                takeDamage(health);
+                health = 0;
             }
             
             switch(health)

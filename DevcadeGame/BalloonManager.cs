@@ -29,6 +29,7 @@ namespace DevcadeGame
         private KeyboardState currentKB;
         private KeyboardState previousKB;
         private Texture2D balloonTexture;
+        public event TakeDamage takeDamage;
 
 
 
@@ -64,6 +65,7 @@ namespace DevcadeGame
                     balloonTexture,0,0,26*window.Width/420,30 * window.Width / 420,
                     1,
                     Map1path));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
             {
@@ -71,6 +73,7 @@ namespace DevcadeGame
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     2,
                     Map1path));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
             {
@@ -78,6 +81,7 @@ namespace DevcadeGame
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     3,
                     Map1path));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
             {
@@ -85,6 +89,7 @@ namespace DevcadeGame
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     4,
                     Map1path));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
             {
@@ -92,6 +97,7 @@ namespace DevcadeGame
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     5,
                     Map1path));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
 
             foreach (Balloons b in balloons)
@@ -102,6 +108,11 @@ namespace DevcadeGame
             previousKB = Keyboard.GetState();
         }
 
+        private void TakeDamage(int damage)
+        {
+            takeDamage(damage);
+        }
+
         public void Draw(SpriteBatch sb)
         {
             foreach (Balloons b in balloons)
@@ -109,6 +120,7 @@ namespace DevcadeGame
                 b.Draw(sb);
             }
         }
+
 
         private void initilizePath()
         {
@@ -137,6 +149,10 @@ namespace DevcadeGame
                 new Vector2(tileSize.X * 7.5f, tileSize.Y * 22.5f),
                 new Vector2(tileSize.X * 13.5f, tileSize.Y * 22.5f)
             };
+        }
+        public void RemoveAllBalloons()
+        {
+            balloons.Clear();
         }
     }
 }
