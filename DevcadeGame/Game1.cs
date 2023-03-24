@@ -188,8 +188,8 @@ namespace DevcadeGame
 						"Press enter to start game",
 						new Vector2(1, 1),
 						Color.Black);
-
 					break;
+
 				case GameState.Game:
                     contentManager.Draw(_spriteBatch);
                     balloonManager.Draw(_spriteBatch);

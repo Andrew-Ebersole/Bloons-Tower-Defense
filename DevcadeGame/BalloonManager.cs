@@ -41,6 +41,11 @@ namespace DevcadeGame
 
         // --- Constructor --- //
 
+        /// <summary>
+        /// Initialize the balloon manager
+        /// </summary>
+        /// <param name="tileSize"> size of one tile grid </param>
+        /// <param name="balloons"> balloon texture </param>
         public BalloonManager(Rectangle tileSize,Texture2D balloons)
         {
             this.balloons = new List<Balloons>();
@@ -55,10 +60,18 @@ namespace DevcadeGame
 
         // --- Methods --- //
 
+        /// <summary>
+        /// Update all the balloons and check for keyboard input
+        /// </summary>
+        /// <param name="gt"></param>
+        /// <param name="window"> dimensions of the screen </param>
             public void Update(GameTime gt, Rectangle window)
         {
+            //Keyboard input
             currentKB = Keyboard.GetState();
 
+            #region manual controls
+            // Manually Spawn Balloons
             if (currentKB.IsKeyDown(Keys.D1) && previousKB.IsKeyUp(Keys.D1))
             {
                 balloons.Add(new Balloons(
@@ -100,19 +113,68 @@ namespace DevcadeGame
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
 
-            foreach (Balloons b in balloons)
+            // Manually Pop Balloons
+            if (currentKB.IsKeyDown(Keys.P) && previousKB.IsKeyUp(Keys.P))
             {
-                b.Update(gt, window);
+                if (balloons.Count > 0)
+                {
+                    Balloons first = balloons[0];
+                    foreach (Balloons b in  balloons)
+                    {
+                        if (b.DistanceTraveled > first.DistanceTraveled)
+                        {
+                            first = b;
+                        }
+                    }
+                    first.Health -= 1;
+                }
+            }
+            if (currentKB.IsKeyDown(Keys.U) && previousKB.IsKeyUp(Keys.U))
+            {
+                if (balloons.Count > 0)
+                {
+                    Balloons first = balloons[0];
+                    foreach (Balloons b in balloons)
+                    {
+                        if (b.DistanceTraveled > first.DistanceTraveled)
+                        {
+                            first = b;
+                        }
+                    }
+                    first.Health -= 3;
+                }
+            }
+            #endregion
+
+            // Remove popped balloons
+            int removedBalloons = 0;
+            for (int i = 0; i < balloons.Count; i++)
+            {
+                balloons[i - removedBalloons].Update(gt,window);
+                if (balloons[i - removedBalloons].Health <= 0)
+                {
+                    balloons.RemoveAt(i);
+                    removedBalloons++;
+                }
             }
 
+            // Previous Keyboard state
             previousKB = Keyboard.GetState();
         }
 
+        /// <summary>
+        /// when a balloon reaches the end sends event to remove lives
+        /// </summary>
+        /// <param name="damage"></param>
         private void TakeDamage(int damage)
         {
             takeDamage(damage);
         }
 
+        /// <summary>
+        /// Draw all the balloons
+        /// </summary>
+        /// <param name="sb"></param>
         public void Draw(SpriteBatch sb)
         {
             foreach (Balloons b in balloons)
@@ -121,7 +183,9 @@ namespace DevcadeGame
             }
         }
 
-
+        /// <summary>
+        /// Create temporary code for balloons path
+        /// </summary>
         private void initilizePath()
         {
             // HARD CODE, YEAH!
@@ -150,6 +214,10 @@ namespace DevcadeGame
                 new Vector2(tileSize.X * 13.5f, tileSize.Y * 22.5f)
             };
         }
+        
+        /// <summary>
+        /// Destroy all balloons when game ends
+        /// </summary>
         public void RemoveAllBalloons()
         {
             balloons.Clear();

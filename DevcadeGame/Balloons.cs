@@ -21,13 +21,16 @@ namespace DevcadeGame
         private int pathNum;
         private Color tint;
         public event TakeDamage takeDamage;
+        public float distanceTraveled;
+
 
 
 
         // --- Properties --- //
 
+        public int Health { get { return health; } set { health = value; } }
 
-
+        public float DistanceTraveled { get { return distanceTraveled; } }
 
 
         // --- Constructor --- //
@@ -39,6 +42,7 @@ namespace DevcadeGame
             this.path = path;
             pathNum = 0;
             tint = Color.White;
+            distanceTraveled = 0;
         }
 
 
@@ -68,6 +72,7 @@ namespace DevcadeGame
                 {
                     position.Y -= speed;
                 }
+                distanceTraveled += speed;
 
                 if ((new Rectangle(rectangle.X,rectangle.Y,4,4 )).Intersects(new Rectangle((int)path[pathNum].X,
                     (int)path[pathNum].Y, 4, 4)))
@@ -84,7 +89,7 @@ namespace DevcadeGame
             
             switch(health)
             {
-                case 0:
+                default:
                     tint = Color.White;
                     speed = 0;
                     break;
@@ -109,7 +114,7 @@ namespace DevcadeGame
                     speed = 3.2f * windowDimensions.Width / 420;
                     break;
                 case 5:
-                    tint = Color.Pink;
+                    tint = Color.HotPink;
                     speed = 3.5f * windowDimensions.Width / 420;
                     break;
             }

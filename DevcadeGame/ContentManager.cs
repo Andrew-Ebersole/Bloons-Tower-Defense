@@ -31,6 +31,11 @@ namespace DevcadeGame
 
         // --- Constructor --- //
 
+        /// <summary>
+        /// Initalize new content manager
+        /// </summary>
+        /// <param name="grassTileSheet"> tile sheet to use </param>
+        /// <param name="tileSize"> size of a tile</param>
         public ContentManager(Texture2D grassTileSheet, int tileSize)
         {
             this.grassTileSheet = grassTileSheet;
@@ -100,6 +105,10 @@ namespace DevcadeGame
 
         // --- Methods --- //
 
+        /// <summary>
+        /// Draw all the tiles
+        /// </summary>
+        /// <param name="sb"></param>
         public void Draw(SpriteBatch sb)
         {
             for (int y = 0; y < 28; y++)
