@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using System.Xml.Linq;
+using Microsoft.Xna.Framework.Audio;
+using System.Reflection.Metadata;
 
 namespace DevcadeGame
 {
@@ -30,6 +33,7 @@ namespace DevcadeGame
         private KeyboardState previousKB;
         private Texture2D balloonTexture;
         public event TakeDamage takeDamage;
+        private SoundEffect pop;
 
 
 
@@ -47,7 +51,7 @@ namespace DevcadeGame
         /// </summary>
         /// <param name="tileSize"> size of one tile grid </param>
         /// <param name="balloons"> balloon texture </param>
-        public BalloonManager(Rectangle tileSize,Texture2D balloons)
+        public BalloonManager(Rectangle tileSize,Texture2D balloons, SoundEffect pop)
         {
             this.balloons = new List<Balloons>();
             this.tileSize = tileSize;
@@ -55,6 +59,7 @@ namespace DevcadeGame
             currentKB = new KeyboardState();
             balloonTexture = balloons;
             initilizePath();
+            this.pop = pop;
         }
 
 
@@ -78,7 +83,8 @@ namespace DevcadeGame
                 balloons.Add(new Balloons(
                     balloonTexture,0,0,26*window.Width/420,30 * window.Width / 420,
                     1,
-                    Map1path));
+                    Map1path,
+                    pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
@@ -86,7 +92,8 @@ namespace DevcadeGame
                 balloons.Add(new Balloons(
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     2,
-                    Map1path));
+                    Map1path,
+                    pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
@@ -94,7 +101,8 @@ namespace DevcadeGame
                 balloons.Add(new Balloons(
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     3,
-                    Map1path));
+                    Map1path,
+                    pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
@@ -102,7 +110,8 @@ namespace DevcadeGame
                 balloons.Add(new Balloons(
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     4,
-                    Map1path));
+                    Map1path,
+                    pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
             if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
@@ -110,7 +119,8 @@ namespace DevcadeGame
                 balloons.Add(new Balloons(
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
                     5,
-                    Map1path));
+                    Map1path,
+                    pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
             }
 
@@ -127,7 +137,7 @@ namespace DevcadeGame
                             first = b;
                         }
                     }
-                    first.Health -= 1;
+                    first.Damage(1);
                 }
             }
             if (currentKB.IsKeyDown(Keys.U) && previousKB.IsKeyUp(Keys.U))
@@ -142,7 +152,7 @@ namespace DevcadeGame
                             first = b;
                         }
                     }
-                    first.Health -= 3;
+                    first.Damage(3);
                 }
             }
             #endregion

@@ -40,6 +40,12 @@
 #begin Map.txt
 /copy:Map.txt
 
+#begin Pop.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Pop.mp3
+
 #begin redBloon.png
 /importer:TextureImporter
 /processor:TextureProcessor

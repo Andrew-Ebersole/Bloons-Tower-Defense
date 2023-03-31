@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace DevcadeGame
 {
@@ -28,7 +29,8 @@ namespace DevcadeGame
 
         // --- Constructor --- //
 
-        public Projectile(Texture2D texture, int x, int y, int width, int height, int speed, Vector2 direction, int damage) : base(texture, x, y, width, height)
+        public Projectile(Texture2D texture, int x, int y, int width, int height, int speed, Vector2 direction, int damage) 
+            : base(texture, x, y, width, height)
         {
             this.speed = speed;
             this.direction = direction;

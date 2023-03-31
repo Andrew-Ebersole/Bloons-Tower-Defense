@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Http.Headers;
 
@@ -22,20 +25,23 @@ namespace DevcadeGame
         private Color tint;
         public event TakeDamage takeDamage;
         public float distanceTraveled;
+        private SoundEffect pop;
+        private ContentManager Content;
 
 
 
 
         // --- Properties --- //
 
-        public int Health { get { return health; } set { health = value; } }
+        public int Health { get { return health; } }
 
         public float DistanceTraveled { get { return distanceTraveled; } }
 
 
         // --- Constructor --- //
 
-        public Balloons(Texture2D texture, int x, int y, int width, int height, int health, List<Vector2> path) : base(texture, (int)path[0].X, (int)path[0].Y, width, height)
+        public Balloons(Texture2D texture, int x, int y, int width, int height, int health, List<Vector2> path, SoundEffect pop) 
+            : base(texture, (int)path[0].X, (int)path[0].Y, width, height)
         {
             this.health = health;
             this.speed = speed;
@@ -43,6 +49,7 @@ namespace DevcadeGame
             pathNum = 0;
             tint = Color.White;
             distanceTraveled = 0;
+            this.pop = pop;
         }
 
 
@@ -130,6 +137,14 @@ namespace DevcadeGame
                 tint);
         }
 
-
+        /// <summary>
+        /// Removes amount of health
+        /// </summary>
+        /// <param name="damageAmount"> amount of health to remove </param>
+        public void Damage(int damageAmount)
+        {
+            health -= damageAmount;
+            pop.Play();
+        }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 using Devcade;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
+
 
 // Andrew Ebersole
 // Started 2.28.23
@@ -112,8 +116,8 @@ namespace DevcadeGame
 
             balloonManager = new BalloonManager(new Rectangle(windowTileSize,windowTileSize,
 				windowTileSize,windowTileSize),
-				Content.Load<Texture2D>("defaultBloon"));
-
+				Content.Load<Texture2D>("defaultBloon"),
+				Content.Load<SoundEffect>("Pop"));
 			balloonManager.takeDamage += LoseHealth;
         }
 

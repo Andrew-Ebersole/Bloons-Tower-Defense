@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace DevcadeGame
 {
@@ -48,6 +49,7 @@ namespace DevcadeGame
             this.texture = texture;
             position = new Vector2(x, y);
             rectangle = new Rectangle((int)position.X, (int)position.Y, width, height);
+
         }
 
 
