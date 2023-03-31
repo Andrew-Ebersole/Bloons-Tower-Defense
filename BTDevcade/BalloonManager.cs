@@ -32,7 +32,7 @@ namespace DevcadeGame
         private KeyboardState currentKB;
         private KeyboardState previousKB;
         private Texture2D balloonTexture;
-        public event TakeDamage takeDamage;
+        public event LoseResource takeDamage;
         private SoundEffect pop;
 
 

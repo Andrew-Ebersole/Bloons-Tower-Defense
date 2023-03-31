@@ -119,6 +119,9 @@ namespace DevcadeGame
 				Content.Load<Texture2D>("defaultBloon"),
 				Content.Load<SoundEffect>("Pop"));
 			balloonManager.takeDamage += LoseHealth;
+
+			monkeyManager = new MonkeyManager(Content.Load<Texture2D>("dartMonkey"),
+				windowTileSize);
         }
 
         /// <summary>
@@ -152,11 +155,13 @@ namespace DevcadeGame
 
 				case GameState.Game:
                     balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
+					monkeyManager.Update(gameTime, new Rectangle(0,0, windowWidth, windowHeight));
+
 					if (lives <= 0)
 					{
 						gameState = GameState.GameOver;
 					}
-                    if (singleKeyPress(Keys.Enter))
+                    if (singleKeyPress(Keys.Space))
                     {
                         gameState = GameState.GameOver;
                     }
@@ -195,8 +200,11 @@ namespace DevcadeGame
 					break;
 
 				case GameState.Game:
+					// Call the manager
                     contentManager.Draw(_spriteBatch);
                     balloonManager.Draw(_spriteBatch);
+					monkeyManager.Draw(_spriteBatch);
+
                     DrawText(_spriteBatch);
                     break;
 

@@ -14,13 +14,30 @@ internal class MonkeyManager
         // --- Fields --- //
 
         private List<Monkey> monkeys;
-        private enum monkeyType
+        private enum GameState
         {
-            Dart,
-            Tack,
-            Sniper,
-            Super,
+            Passive,
+            Place,
+            Upgrade,
+            Selection
         }
+        private GameState gameState;
+        private Vector2 OverlayPos;
+        private int selectedMonkey;
+
+        // Keystates
+        private KeyboardState currentKS;
+        private KeyboardState previousKS;
+
+        // Textures
+        Texture2D monkeyTexture;
+
+
+        // Tile size
+        float tileSize;
+
+        // Event
+        public event LoseResource buyTower;
 
 
         // --- Properties --- //
@@ -31,20 +48,70 @@ internal class MonkeyManager
 
         // --- Constructor --- //
 
-        public MonkeyManager()
+        public MonkeyManager(Texture2D monkeyTexture, float tileSize)
         {
+            // Game State
+            gameState = GameState.Passive;
+
+            // Keyboard States
+            currentKS = Keyboard.GetState();
+            previousKS = Keyboard.GetState();
+
+            // Window sizes
+            OverlayPos = new Vector2(0, 0);
+            this.tileSize = tileSize;
+
+            // Lists and array
+            monkeys = new List<Monkey>();
+
+            // Textures
+            this.monkeyTexture = monkeyTexture;
         }
 
 
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions)
+        public void Update(GameTime gt, Rectangle windowDimensions, int money)
         {
+            currentKS = Keyboard.GetState();
+
             foreach(Monkey m in monkeys)
             {
                 m.Update(gt, windowDimensions);
             }
+            switch(gameState)
+            {
+                case GameState.Passive:
+                    if (SingleKeyPress(Keys.Q))
+                    {
+                        gameState = GameState.Place;
+                    }
+                    break;
+
+                case GameState.Place:
+                    MoveOverlay();
+
+                    // Place monkey
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        gameState = GameState.Passive;
+                        monkeys.Add(new Monkey(
+                            monkeyTexture,
+                            (int)((OverlayPos.X + 0.05f) * tileSize),
+                            (int)((OverlayPos.Y + 0.05f) * tileSize),
+                            (int)(tileSize * 0.9f),
+                            (int)(tileSize * 0.9f),
+                            1,
+                            1,
+                            (int)(3 * tileSize),
+                            150));
+
+                    }
+                    break;
+            }
+            
+            previousKS = currentKS;
         }
 
         public void Draw(SpriteBatch sb)
@@ -53,6 +120,70 @@ internal class MonkeyManager
             {
                 m.Draw(sb);
             }
+            switch (gameState)
+            {
+                case GameState.Passive:
+                    break;
+
+                case GameState.Place:
+                    DrawOverlay(sb);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Move the overlay before placing
+        /// </summary>
+        public void MoveOverlay()
+        {
+            // Change position or sum
+            if (SingleKeyPress(Keys.W)
+                && OverlayPos.Y > 0)
+            {
+                OverlayPos.Y -= 1;
+            }
+            if (SingleKeyPress(Keys.A)
+                && OverlayPos.X > 0)
+            {
+                OverlayPos.X -= 1;
+            }
+            if (SingleKeyPress(Keys.S)
+                && OverlayPos.Y < 28)
+            {
+                OverlayPos.Y += 1;
+            }
+            if (SingleKeyPress(Keys.D)
+                && OverlayPos.X < 12)
+            {
+                OverlayPos.X += 1;
+            }
+        }
+
+        /// <summary>
+        /// Draw the overlay before placing tower
+        /// </summary>
+        /// <param name="sb"></param>
+        public void DrawOverlay(SpriteBatch sb)
+        {
+            sb.Draw(monkeyTexture,                                  // Texture
+                new Rectangle((int)((OverlayPos.X+0.05f)*tileSize), // X
+                (int)((OverlayPos.Y + 0.05f) * tileSize),           // Y
+                (int)(tileSize * 0.9f), (int)(tileSize * 0.9f)),    // Size   
+                Color.White * 0.5f);                                // Tint
+        }
+
+        /// <summary>
+        /// Checks if the key was pressed not held
+        /// </summary>
+        /// <param name="key"> the key to check </param>
+        /// <returns> bool </returns>
+        public bool SingleKeyPress(Keys key)
+        {
+            if(currentKS.IsKeyDown(key) && previousKS.IsKeyUp(key))
+            {
+                return true;
+            }
+            return false;
         }
 
     }
