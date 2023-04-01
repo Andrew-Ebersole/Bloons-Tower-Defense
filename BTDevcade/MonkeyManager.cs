@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using System.ComponentModel;
 
 namespace DevcadeGame
 {
@@ -28,7 +29,7 @@ internal class MonkeyManager
         // Keystates
         private KeyboardState currentKS;
         private KeyboardState previousKS;
-
+        
         // Textures
         Texture2D monkeyTexture;
         Texture2D circle;
@@ -38,7 +39,6 @@ internal class MonkeyManager
 
         // Event
         public event LoseResource buyTower;
-
 
         // --- Properties --- //
 
@@ -98,25 +98,32 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    MoveOverlay();
+                    if (money >= 150)
+                    {
+                        MoveOverlay();
 
-                    // Place monkey
-                    if (SingleKeyPress(Keys.Enter))
+                        // Place monkey
+                        if (SingleKeyPress(Keys.Enter))
+                        {
+                            gameState = GameState.Passive;
+                            monkeys.Add(new Monkey(
+                                monkeyTexture,
+                                circle,
+                                (int)((OverlayPos.X + 0.05f) * tileSize),
+                                (int)((OverlayPos.Y + 0.05f) * tileSize),
+                                (int)(tileSize * 0.9f),
+                                (int)(tileSize * 0.9f),
+                                1,
+                                1,
+                                (int)(3 * tileSize),
+                                150));
+                            buyTower(150);
+
+                        }
+                    }
+                    else
                     {
                         gameState = GameState.Passive;
-                        monkeys.Add(new Monkey(
-                            monkeyTexture,
-                            circle,
-                            (int)((OverlayPos.X + 0.05f) * tileSize),
-                            (int)((OverlayPos.Y + 0.05f) * tileSize),
-                            (int)(tileSize * 0.9f),
-                            (int)(tileSize * 0.9f),
-                            1,
-                            1,
-                            (int)(3 * tileSize),
-                            150));
-                        buyTower(150); 
-
                     }
                     break;
                 case GameState.Upgrade:

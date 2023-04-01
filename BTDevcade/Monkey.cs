@@ -23,6 +23,8 @@ namespace DevcadeGame
         Balloons target;
         private double timeSinceLastShot;
         private Texture2D circle;
+        private float rotation;
+        private float tileSize;
 
         // --- Properties --- //
 
@@ -40,6 +42,7 @@ namespace DevcadeGame
             this.range = range;
             this.cost = cost;
             this.circle = circle;
+            rotation = 0f * (float)Math.PI;
         }
 
 
@@ -49,6 +52,8 @@ namespace DevcadeGame
         public void Update(GameTime gt, Rectangle windowDimensions, List<Balloons> bloons)
         {
             timeSinceLastShot += gt.ElapsedGameTime.TotalMilliseconds;
+
+            tileSize = windowDimensions.Width / 12;
 
             List<Balloons> inRange = new List<Balloons>();
             inRange.Clear();
@@ -74,9 +79,10 @@ namespace DevcadeGame
                         target = b;                    
                     }
                 }
-                
+
                 // Show what the tower is targeting
                 //target.HighlightRed();
+                rotation = RotationAngle(target);
 
                 if (timeSinceLastShot > 1000 / attackSpeed
                     && BalloonInRange(target))
@@ -95,7 +101,15 @@ namespace DevcadeGame
 
         public override void Draw(SpriteBatch sb)
         {
-            base.Draw(sb);
+            sb.Draw(texture,
+                new Rectangle(rectangle.X + (int)(tileSize * 0.58f),rectangle.Y + (int)(tileSize * 0.55f),
+                rectangle.Width,rectangle.Height),
+                null,
+                Color.White,
+                rotation,
+                new Vector2(rectangle.Width *2.0f, rectangle.Height *2.0f),
+                SpriteEffects.None,
+                0);
         }
 
         public void drawRange(SpriteBatch sb)
@@ -114,6 +128,14 @@ namespace DevcadeGame
                 return true;
             }
             return false;
+        }
+        
+        public float RotationAngle(GameObject g)
+        {
+            float angle = (float)Math.Atan2(g.Rectangle.Y - Rectangle.Y, g.Rectangle.X - Rectangle.X);
+            float rotationAngle = angle - (float)(Math.PI / 2);
+
+            return rotationAngle;
         }
     }
 }
