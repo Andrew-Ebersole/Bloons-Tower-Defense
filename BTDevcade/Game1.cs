@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Media;
 namespace DevcadeGame
 {
     // Delegates
-    public delegate void TakeDamage(int damage);
+    public delegate void LoseResource(int amount);
 
     public class Game1 : Game
 	{
@@ -119,9 +119,13 @@ namespace DevcadeGame
 				Content.Load<Texture2D>("defaultBloon"),
 				Content.Load<SoundEffect>("Pop"));
 			balloonManager.takeDamage += LoseHealth;
+			balloonManager.gainMoney += GainMoney;
 
 			monkeyManager = new MonkeyManager(Content.Load<Texture2D>("dartMonkey"),
-				windowTileSize);
+				windowTileSize, 
+				Content.Load<Texture2D>("circle"));
+			monkeyManager.buyTower += UseMoney;
+
         }
 
         /// <summary>
@@ -155,7 +159,8 @@ namespace DevcadeGame
 
 				case GameState.Game:
                     balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
-					monkeyManager.Update(gameTime, new Rectangle(0,0, windowWidth, windowHeight));
+					monkeyManager.Update(gameTime, new Rectangle(0,0, windowWidth, windowHeight),
+						money, balloonManager.Balloons);
 
 					if (lives <= 0)
 					{
@@ -164,6 +169,7 @@ namespace DevcadeGame
                     if (singleKeyPress(Keys.Space))
                     {
                         gameState = GameState.GameOver;
+						monkeyManager.KillAllTowers();
                     }
                     break;
 
@@ -232,7 +238,7 @@ namespace DevcadeGame
 			sb.DrawString(
 				testFont,
 				$"${money}" +
-				$"\nRound: {round}" +
+				$"\nRound: {balloonManager.Balloons.Count}" +
 				$"\nLives: {lives}",
 				new Vector2(windowTileSize*3.2f,windowTileSize*0.1f),
 				Color.LightGoldenrodYellow);
@@ -241,15 +247,25 @@ namespace DevcadeGame
 		private void StartGame()
 		{
 			money = 700;
-			lives = 100;
+			lives = 100000;
 			round = 0;
 			balloonManager.RemoveAllBalloons(); 
 		}
 
-        public void LoseHealth(int damage)
+        public void LoseHealth(int amount)
         {
-			lives -= damage;
+			lives -= amount;
         }
+
+		public void UseMoney(int amount)
+		{
+			money -= amount;
+		}
+
+		public void GainMoney(int amount)
+		{
+			money += amount;
+		}
 
 		public bool singleKeyPress(Keys key)
 		{

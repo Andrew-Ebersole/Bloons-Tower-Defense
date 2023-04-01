@@ -33,13 +33,17 @@ namespace DevcadeGame
         private KeyboardState previousKB;
         private Texture2D balloonTexture;
         public event LoseResource takeDamage;
+        public event LoseResource gainMoney;
         private SoundEffect pop;
 
 
 
         // --- Properties --- //
 
-
+        /// <summary>
+        /// List of balloons
+        /// </summary>
+        public List<Balloons> Balloons { get { return balloons; } }
 
 
 
@@ -86,6 +90,7 @@ namespace DevcadeGame
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
             }
             if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
             {
@@ -95,6 +100,7 @@ namespace DevcadeGame
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
             }
             if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
             {
@@ -104,6 +110,7 @@ namespace DevcadeGame
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
             }
             if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
             {
@@ -113,6 +120,7 @@ namespace DevcadeGame
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
             }
             if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
             {
@@ -122,6 +130,8 @@ namespace DevcadeGame
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+
             }
 
             // Manually Pop Balloons
@@ -180,6 +190,12 @@ namespace DevcadeGame
         private void TakeDamage(int damage)
         {
             takeDamage(damage);
+            
+        }
+
+        private void MakeMoney(int amount)
+        {
+            gainMoney(amount);
         }
 
         /// <summary>
@@ -233,5 +249,6 @@ namespace DevcadeGame
         {
             balloons.Clear();
         }
+
     }
 }

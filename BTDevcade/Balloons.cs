@@ -23,7 +23,8 @@ namespace DevcadeGame
         private List<Vector2> path;
         private int pathNum;
         private Color tint;
-        public event TakeDamage takeDamage;
+        public event LoseResource takeDamage;
+        public event LoseResource gainMoney;
         public float distanceTraveled;
         private SoundEffect pop;
         private ContentManager Content;
@@ -36,6 +37,9 @@ namespace DevcadeGame
         public int Health { get { return health; } }
 
         public float DistanceTraveled { get { return distanceTraveled; } }
+
+        public Vector2 Position { get { return new Vector2(rectangle.X + rectangle.Width / 2,
+            rectangle.Y + rectangle.Height / 2); } }
 
 
         // --- Constructor --- //
@@ -145,6 +149,12 @@ namespace DevcadeGame
         {
             health -= damageAmount;
             pop.Play();
+            gainMoney(damageAmount);
+        }
+
+        public void HighlightRed()
+        {
+            tint = Color.DarkMagenta;
         }
     }
 }

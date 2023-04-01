@@ -31,7 +31,7 @@ internal class MonkeyManager
 
         // Textures
         Texture2D monkeyTexture;
-
+        Texture2D circle;
 
         // Tile size
         float tileSize;
@@ -48,7 +48,7 @@ internal class MonkeyManager
 
         // --- Constructor --- //
 
-        public MonkeyManager(Texture2D monkeyTexture, float tileSize)
+        public MonkeyManager(Texture2D monkeyTexture, float tileSize, Texture2D circle)
         {
             // Game State
             gameState = GameState.Passive;
@@ -66,19 +66,22 @@ internal class MonkeyManager
 
             // Textures
             this.monkeyTexture = monkeyTexture;
+            this.circle = circle;
+
+            selectedMonkey = -1;
         }
 
 
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions, int money)
+        public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> bloons)
         {
             currentKS = Keyboard.GetState();
 
             foreach(Monkey m in monkeys)
             {
-                m.Update(gt, windowDimensions);
+                m.Update(gt, windowDimensions, bloons);
             }
             switch(gameState)
             {
@@ -86,6 +89,11 @@ internal class MonkeyManager
                     if (SingleKeyPress(Keys.Q))
                     {
                         gameState = GameState.Place;
+                    }
+                    if (SingleKeyPress(Keys.Right))
+                    {
+                        gameState = GameState.Upgrade;
+                        selectedMonkey = 0;
                     }
                     break;
 
@@ -98,6 +106,7 @@ internal class MonkeyManager
                         gameState = GameState.Passive;
                         monkeys.Add(new Monkey(
                             monkeyTexture,
+                            circle,
                             (int)((OverlayPos.X + 0.05f) * tileSize),
                             (int)((OverlayPos.Y + 0.05f) * tileSize),
                             (int)(tileSize * 0.9f),
@@ -106,9 +115,31 @@ internal class MonkeyManager
                             1,
                             (int)(3 * tileSize),
                             150));
+                        buyTower(150); 
 
                     }
                     break;
+                case GameState.Upgrade:
+
+                    if (SingleKeyPress(Keys.Left))
+                    {
+                        selectedMonkey--;
+                    }
+                    if (SingleKeyPress(Keys.Right) 
+                        && selectedMonkey < monkeys.Count)
+                    {
+                        selectedMonkey++;
+                    }
+                    if (selectedMonkey >= monkeys.Count)
+                    {
+                        selectedMonkey = 0;
+                    }
+                    if (selectedMonkey == -1)
+                    {
+                        gameState = GameState.Passive;
+                    }
+                    break;
+                    
             }
             
             previousKS = currentKS;
@@ -127,6 +158,17 @@ internal class MonkeyManager
 
                 case GameState.Place:
                     DrawOverlay(sb);
+
+                    sb.Draw(circle,
+                        new Rectangle((int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (3 * tileSize)),
+                        (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (3 * tileSize)),
+                        (int)(3 * tileSize) * 2, (int)(3 * tileSize) * 2),
+                        Color.White * 0.2f);
+
+                    break;
+
+                case GameState.Upgrade:
+                    monkeys[selectedMonkey].drawRange(sb);
                     break;
             }
         }
@@ -186,5 +228,14 @@ internal class MonkeyManager
             return false;
         }
 
+        public void spendMoney(int amount)
+        {
+            buyTower(amount);
+        }
+
+        public void KillAllTowers()
+        {
+            monkeys.Clear();
+        }
     }
 }
