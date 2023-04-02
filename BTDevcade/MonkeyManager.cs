@@ -33,6 +33,7 @@ internal class MonkeyManager
         // Textures
         Texture2D monkeyTexture;
         Texture2D circle;
+        Texture2D dart;
 
         // Tile size
         float tileSize;
@@ -48,7 +49,7 @@ internal class MonkeyManager
 
         // --- Constructor --- //
 
-        public MonkeyManager(Texture2D monkeyTexture, float tileSize, Texture2D circle)
+        public MonkeyManager(Texture2D monkeyTexture, float tileSize, Texture2D circle, Texture2D dart)
         {
             // Game State
             gameState = GameState.Passive;
@@ -67,6 +68,7 @@ internal class MonkeyManager
             // Textures
             this.monkeyTexture = monkeyTexture;
             this.circle = circle;
+            this.dart = dart;
 
             selectedMonkey = -1;
         }
@@ -109,6 +111,7 @@ internal class MonkeyManager
                             monkeys.Add(new Monkey(
                                 monkeyTexture,
                                 circle,
+                                dart,
                                 (int)((OverlayPos.X + 0.05f) * tileSize),
                                 (int)((OverlayPos.Y + 0.05f) * tileSize),
                                 (int)(tileSize * 0.9f),

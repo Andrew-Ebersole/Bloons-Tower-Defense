@@ -20,11 +20,13 @@ namespace DevcadeGame
         private int range;
         private int cost;
         private Vector2 direction;
-        Balloons target;
         private double timeSinceLastShot;
         private Texture2D circle;
+        private Texture2D dart;
         private float rotation;
         private float tileSize;
+        private List<Projectile> projectiles;
+
 
         // --- Properties --- //
 
@@ -34,7 +36,8 @@ namespace DevcadeGame
 
         // --- Constructor --- //
 
-        public Monkey(Texture2D texture, Texture2D circle, int x, int y, int width, int height, int damage, int attackSpeed, int range, int cost) 
+        public Monkey(Texture2D texture, Texture2D circle, Texture2D dart, int x, int y, int width, int height,
+            int damage, int attackSpeed, int range, int cost) 
             : base(texture, x, y, width, height)
         {
             this.damage = damage;
@@ -42,7 +45,9 @@ namespace DevcadeGame
             this.range = range;
             this.cost = cost;
             this.circle = circle;
+            this.dart = dart;
             rotation = 0f * (float)Math.PI;
+            projectiles = new List<Projectile>();
         }
 
 
@@ -91,12 +96,30 @@ namespace DevcadeGame
                     shoot(target);
                 }
             }
+
+            List<Projectile> removeProjectiles = new List<Projectile>();
+            foreach(Projectile p in projectiles)
+            {
+                if (p.Active)
+                {
+                    p.Update(gt, windowDimensions);
+                }
+                else
+                {
+                    removeProjectiles.Add(p);
+                }
+            }
             
+            foreach (Projectile p in removeProjectiles)
+            {
+                projectiles.Remove(p);
+            }
+            removeProjectiles.Clear();
         }
 
         private void shoot(Balloons b)
         {
-            b.Damage(damage);
+            projectiles.Add(new Projectile(dart,rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Width/2,8,16,8,1,b));
         }
 
         public override void Draw(SpriteBatch sb)
@@ -110,6 +133,11 @@ namespace DevcadeGame
                 new Vector2(rectangle.Width *2.0f, rectangle.Height *2.0f),
                 SpriteEffects.None,
                 0);
+
+            foreach(Projectile p in projectiles)
+            {
+                p.Draw(sb);
+            }
         }
 
         public void drawRange(SpriteBatch sb)

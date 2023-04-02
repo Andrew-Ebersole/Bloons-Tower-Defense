@@ -123,7 +123,8 @@ namespace DevcadeGame
 
 			monkeyManager = new MonkeyManager(Content.Load<Texture2D>("dartMonkey"),
 				windowTileSize, 
-				Content.Load<Texture2D>("circle"));
+				Content.Load<Texture2D>("circle"),
+				Content.Load<Texture2D>("dart"));
 			monkeyManager.buyTower += UseMoney;
 
         }
