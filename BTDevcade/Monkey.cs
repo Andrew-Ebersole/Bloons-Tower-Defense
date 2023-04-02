@@ -153,7 +153,9 @@ namespace DevcadeGame
         private bool BalloonInRange(Balloons b)
         {
             if (range + b.Rectangle.Width / 2 >=
-                new Vector2(Math.Abs(Rectangle.X - b.Rectangle.X), Math.Abs(Rectangle.Y - b.Rectangle.Y)).Length())
+                new Vector2(
+                    Math.Abs((Rectangle.X+Rectangle.Width/2) - (b.Rectangle.X)), 
+                    Math.Abs((Rectangle.Y+Rectangle.Width/2) - (b.Rectangle.Y))).Length())
             {
                 return true;
             }

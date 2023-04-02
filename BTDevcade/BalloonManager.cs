@@ -34,6 +34,7 @@ namespace DevcadeGame
         private double spawnTimer;
         private int balloonToSpawn;
         private List<char> currentRoundChars;
+        private int round;
 
 
         // --- Properties --- //
@@ -45,7 +46,7 @@ namespace DevcadeGame
 
         public bool RoundEnded { get
             {
-                if (balloonToSpawn == currentRoundChars.Count
+                if (balloonToSpawn >= currentRoundChars.Count
                     && balloons.Count == 0)
                 {
                     return true;
@@ -76,6 +77,7 @@ namespace DevcadeGame
             spawnTimer = 0;
             currentRoundChars = new List<char>();
             balloonToSpawn = 0;
+            round = 0;
         }
 
 
@@ -100,6 +102,12 @@ namespace DevcadeGame
                 SpawnBalloon(currentRoundChars[balloonToSpawn], window);
                 balloonToSpawn++;
                 spawnTimer -= 100;
+            }
+            if (balloonToSpawn == currentRoundChars.Count
+                && balloons.Count == 0)
+            {
+                gainMoney(100 + round);
+                balloonToSpawn++;
             }
             #region manual controls
             // Manually Spawn Balloons
@@ -263,6 +271,7 @@ namespace DevcadeGame
                 currentRoundChars = roundsList[round - 1];
                 spawnTimer = 0;
                 balloonToSpawn = 0;
+                this.round = round;
             }
         }
 
@@ -280,5 +289,6 @@ namespace DevcadeGame
                 balloons[balloons.Count - 1].gainMoney += MakeMoney;
             }
         }
+
     }
 }

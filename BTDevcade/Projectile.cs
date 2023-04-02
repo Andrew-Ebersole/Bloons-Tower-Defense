@@ -20,6 +20,7 @@ namespace DevcadeGame
         private int damage;
         private Balloons target;
         private bool active;
+        private float rotation;
 
 
 
@@ -41,6 +42,7 @@ namespace DevcadeGame
             this.damage = damage;
             target = b;
             active = true;
+            rotation = RotationAngle();
         }
 
 
@@ -68,7 +70,7 @@ namespace DevcadeGame
                 rectangle,
                 null,
                 Color.White,
-                RotationAngle(),
+                rotation,
                 new Vector2(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2),
                 SpriteEffects.None,
                 1);

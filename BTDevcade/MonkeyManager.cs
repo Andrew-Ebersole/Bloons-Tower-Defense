@@ -118,7 +118,7 @@ internal class MonkeyManager
                                 (int)(tileSize * 0.9f),
                                 1,
                                 1,
-                                (int)(3 * tileSize),
+                                (int)(2 * tileSize),
                                 200));
                             buyTower(200);
 
@@ -170,10 +170,11 @@ internal class MonkeyManager
                     DrawOverlay(sb);
 
                     sb.Draw(circle,
-                        new Rectangle((int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (3 * tileSize)),
-                        (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (3 * tileSize)),
-                        (int)(3 * tileSize) * 2, (int)(3 * tileSize) * 2),
-                        Color.White * 0.2f);
+                        new Rectangle(
+                            (int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (2 * tileSize)),    // Y
+                            (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (2 * tileSize)),    // X
+                            (int)(2 * tileSize) * 2, (int)(2 * tileSize) * 2),                                      // Radius
+                            Color.White * 0.2f);                                                                    // Tint
 
                     break;
 

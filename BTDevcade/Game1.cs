@@ -253,7 +253,7 @@ namespace DevcadeGame
 
 		private void StartGame()
 		{
-			money = 650;
+			money = 550;
 			lives = 150;
 			round = 0;
 			balloonManager.RemoveAllBalloons(); 
