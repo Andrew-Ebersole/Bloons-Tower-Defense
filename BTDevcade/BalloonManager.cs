@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework.Audio;
 using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 
 namespace DevcadeGame
 {
@@ -19,13 +20,7 @@ namespace DevcadeGame
         // --- Fields --- //
 
         
-        private enum balloonType
-        {
-            Red,
-            Blue,
-            Green,
-            Yellow,
-        }
+        // TODO: organize these
         private List<Vector2> Map1path;
         private List<Balloons> balloons;
         private Rectangle tileSize;
@@ -35,7 +30,10 @@ namespace DevcadeGame
         public event LoseResource takeDamage;
         public event LoseResource gainMoney;
         private SoundEffect pop;
-
+        public List<List<char>> roundsList;
+        private double spawnTimer;
+        private int balloonToSpawn;
+        private List<char> currentRoundChars;
 
 
         // --- Properties --- //
@@ -45,7 +43,16 @@ namespace DevcadeGame
         /// </summary>
         public List<Balloons> Balloons { get { return balloons; } }
 
-
+        public bool RoundEnded { get
+            {
+                if (balloonToSpawn == currentRoundChars.Count
+                    && balloons.Count == 0)
+                {
+                    return true;
+                }
+                return false;
+            } 
+        }
 
 
         // --- Constructor --- //
@@ -64,6 +71,11 @@ namespace DevcadeGame
             balloonTexture = balloons;
             initilizePath();
             this.pop = pop;
+            roundsList = new List<List<char>>();
+            LoadRounds();
+            spawnTimer = 0;
+            currentRoundChars = new List<char>();
+            balloonToSpawn = 0;
         }
 
 
@@ -80,58 +92,36 @@ namespace DevcadeGame
             //Keyboard input
             currentKB = Keyboard.GetState();
 
+            //Spawn balloons based off round
+            spawnTimer += gt.ElapsedGameTime.Milliseconds;
+            if (balloonToSpawn < currentRoundChars.Count
+                && spawnTimer > 100)
+            {
+                SpawnBalloon(currentRoundChars[balloonToSpawn], window);
+                balloonToSpawn++;
+                spawnTimer -= 100;
+            }
             #region manual controls
             // Manually Spawn Balloons
             if (currentKB.IsKeyDown(Keys.D1) && previousKB.IsKeyUp(Keys.D1))
             {
-                balloons.Add(new Balloons(
-                    balloonTexture,0,0,26*window.Width/420,30 * window.Width / 420,
-                    1,
-                    Map1path,
-                    pop));
-                balloons[balloons.Count - 1].takeDamage += TakeDamage;
-                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+                SpawnBalloon('1', window);
             }
             if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
             {
-                balloons.Add(new Balloons(
-                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
-                    2,
-                    Map1path,
-                    pop));
-                balloons[balloons.Count - 1].takeDamage += TakeDamage;
-                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+                SpawnBalloon('2', window);
             }
             if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
             {
-                balloons.Add(new Balloons(
-                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
-                    3,
-                    Map1path,
-                    pop));
-                balloons[balloons.Count - 1].takeDamage += TakeDamage;
-                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+                SpawnBalloon('3', window);
             }
             if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
             {
-                balloons.Add(new Balloons(
-                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
-                    4,
-                    Map1path,
-                    pop));
-                balloons[balloons.Count - 1].takeDamage += TakeDamage;
-                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+                SpawnBalloon('4', window);
             }
             if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
             {
-                balloons.Add(new Balloons(
-                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
-                    5,
-                    Map1path,
-                    pop));
-                balloons[balloons.Count - 1].takeDamage += TakeDamage;
-                balloons[balloons.Count - 1].gainMoney += MakeMoney;
-
+                SpawnBalloon('5', window);
             }
 
             // Manually Pop Balloons
@@ -206,7 +196,7 @@ namespace DevcadeGame
         {
             foreach (Balloons b in balloons)
             {
-                b.Draw(sb);
+                b.Draw(sb); 
             }
         }
 
@@ -250,5 +240,45 @@ namespace DevcadeGame
             balloons.Clear();
         }
 
+        public void LoadRounds()
+        {
+            StreamReader roundInput = new StreamReader("Content/Rounds.txt");
+            string line = "";
+            while ((line = roundInput.ReadLine()) != null)
+            {
+                List<char> chars = new List<char>();
+                for (int i = 0; i < line.Length; i++)
+                {
+                    chars.Add(line[i]);
+                }
+                roundsList.Add(chars);
+            }
+            roundInput.Close();
+        }
+
+        public void StartRound(int round)
+        {
+            if (roundsList.Count >= round)
+            {
+                currentRoundChars = roundsList[round - 1];
+                spawnTimer = 0;
+                balloonToSpawn = 0;
+            }
+        }
+
+        public void SpawnBalloon(char balloonValue, Rectangle window)
+        {
+            int health = int.Parse($"{balloonValue}");
+            if (health > 0)
+            {
+                balloons.Add(new Balloons(
+                    balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
+                    health,
+                    Map1path,
+                    pop));
+                balloons[balloons.Count - 1].takeDamage += TakeDamage;
+                balloons[balloons.Count - 1].gainMoney += MakeMoney;
+            }
+        }
     }
 }

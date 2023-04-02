@@ -172,6 +172,12 @@ namespace DevcadeGame
                         gameState = GameState.GameOver;
 						monkeyManager.KillAllTowers();
                     }
+					if (balloonManager.RoundEnded
+						&& singleKeyPress(Keys.M))
+					{
+						round++;
+						balloonManager.StartRound(round);
+					}
                     break;
 
 				case GameState.GameOver:
@@ -239,7 +245,7 @@ namespace DevcadeGame
 			sb.DrawString(
 				testFont,
 				$"${money}" +
-				$"\nRound: {balloonManager.Balloons.Count}" +
+				$"\nRound: {round}" +
 				$"\nLives: {lives}",
 				new Vector2(windowTileSize*3.2f,windowTileSize*0.1f),
 				Color.LightGoldenrodYellow);
@@ -247,8 +253,8 @@ namespace DevcadeGame
 
 		private void StartGame()
 		{
-			money = 700;
-			lives = 100000;
+			money = 650;
+			lives = 150;
 			round = 0;
 			balloonManager.RemoveAllBalloons(); 
 		}

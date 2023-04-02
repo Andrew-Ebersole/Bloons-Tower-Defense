@@ -28,6 +28,7 @@ namespace DevcadeGame
         public float distanceTraveled;
         private SoundEffect pop;
         private ContentManager Content;
+        public int targetDamage;
 
 
 
@@ -37,6 +38,8 @@ namespace DevcadeGame
         public int Health { get { return health; } }
 
         public float DistanceTraveled { get { return distanceTraveled; } }
+
+        public int TargetDamage { get { return targetDamage; } set { targetDamage = value; } }
 
         public Vector2 Position { get { return new Vector2(rectangle.X + rectangle.Width / 2,
             rectangle.Y + rectangle.Height / 2); } }
@@ -54,6 +57,7 @@ namespace DevcadeGame
             tint = Color.White;
             distanceTraveled = 0;
             this.pop = pop;
+            targetDamage = 0;
         }
 
 
@@ -150,6 +154,7 @@ namespace DevcadeGame
             health -= damageAmount;
             pop.Play();
             gainMoney(damageAmount);
+            targetDamage -= damageAmount;
         }
 
         public void HighlightRed()

@@ -81,7 +81,7 @@ namespace DevcadeGame
                 {
                     if (b.DistanceTraveled > target.DistanceTraveled)
                     {
-                        target = b;                    
+                        target = b;
                     }
                 }
 
@@ -90,8 +90,10 @@ namespace DevcadeGame
                 rotation = RotationAngle(target);
 
                 if (timeSinceLastShot > 1000 / attackSpeed
-                    && BalloonInRange(target))
+                    && BalloonInRange(target)
+                    && target.TargetDamage < target.Health)
                 {
+                    target.TargetDamage += damage;
                     timeSinceLastShot = 0;
                     shoot(target);
                 }

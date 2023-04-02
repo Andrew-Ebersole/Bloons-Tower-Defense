@@ -100,7 +100,7 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    if (money >= 150)
+                    if (money >= 200)
                     {
                         MoveOverlay();
 
@@ -119,8 +119,8 @@ internal class MonkeyManager
                                 1,
                                 1,
                                 (int)(3 * tileSize),
-                                150));
-                            buyTower(150);
+                                200));
+                            buyTower(200);
 
                         }
                     }
@@ -200,12 +200,12 @@ internal class MonkeyManager
                 OverlayPos.X -= 1;
             }
             if (SingleKeyPress(Keys.S)
-                && OverlayPos.Y < 28)
+                && OverlayPos.Y < 27)
             {
                 OverlayPos.Y += 1;
             }
             if (SingleKeyPress(Keys.D)
-                && OverlayPos.X < 12)
+                && OverlayPos.X < 11)
             {
                 OverlayPos.X += 1;
             }

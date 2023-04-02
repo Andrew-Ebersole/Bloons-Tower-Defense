@@ -82,6 +82,9 @@
 /processorParam:TextureFormat=Color
 /build:redBloon.png
 
+#begin Rounds.txt
+/copy:Rounds.txt
+
 #begin testBalloon.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
