@@ -23,6 +23,14 @@ internal class MonkeyManager
             Selection
         }
         private GameState gameState;
+        private enum PlaceMonkeyType
+        {
+            Dart,
+            Tack,
+            Sniper,
+            Super
+        }
+        private PlaceMonkeyType monkeyType; // like the game evan plays
         private Vector2 OverlayPos;
         private int selectedMonkey;
 
@@ -71,6 +79,7 @@ internal class MonkeyManager
             this.dart = dart;
 
             selectedMonkey = -1;
+            monkeyType = PlaceMonkeyType.Dart;
         }
 
 
@@ -91,6 +100,12 @@ internal class MonkeyManager
                     if (SingleKeyPress(Keys.Q))
                     {
                         gameState = GameState.Place;
+                        monkeyType = PlaceMonkeyType.Dart;
+                    }
+                    if (SingleKeyPress(Keys.E))
+                    {
+                        gameState = GameState.Place;
+                        monkeyType = PlaceMonkeyType.Super;
                     }
                     if (SingleKeyPress(Keys.Right))
                     {
@@ -100,37 +115,76 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    if (money >= 200)
+                    #region Place Monkeys
+
+                    switch (monkeyType)
                     {
-                        MoveOverlay();
+                        case PlaceMonkeyType.Dart:
+                            if (money >= 200)
+                            {
+                                MoveOverlay();
 
-                        // Place monkey
-                        if (SingleKeyPress(Keys.Enter))
-                        {
-                            gameState = GameState.Passive;
-                            monkeys.Add(new Monkey(
-                                monkeyTexture,  // Monkey Texutre
-                                circle,         // Range Circle texture
-                                dart,           // Projectile Texture
-                                (int)((OverlayPos.X + 0.05f) * tileSize),   // X
-                                (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
-                                (int)(tileSize * 0.9f),                     // Width
-                                (int)(tileSize * 0.9f),                     // Height
-                                1,                  // Damage
-                                21.1f,                  // Attack Speed
-                                (int)(3.1f * tileSize),// Range
-                                200,                // Cost
-                                1,                  // Pierce
-                                balloons));         // Balloons List
-                            buyTower(200);
+                                // Place monkey
+                                if (SingleKeyPress(Keys.Enter))
+                                {
+                                    gameState = GameState.Passive;
+                                    monkeys.Add(new Monkey(
+                                        monkeyTexture,  // Monkey Texutre
+                                        circle,         // Range Circle texture
+                                        dart,           // Projectile Texture
+                                        (int)((OverlayPos.X + 0.05f) * tileSize),   // X
+                                        (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
+                                        (int)(tileSize * 0.9f),                     // Width
+                                        (int)(tileSize * 0.9f),                     // Height
+                                        1,                  // Damage
+                                        1,                  // Attack Speed
+                                        (int)(2 * tileSize),// Range
+                                        200,                // Cost
+                                        2,                  // Pierce
+                                        balloons));         // Balloons List
+                                    buyTower(200);
 
-                        }
+                                }
+                            }
+                            break;
+
+                        case PlaceMonkeyType.Super:
+                            if (money >= 2500)
+                            {
+                                MoveOverlay();
+
+                                // Place monkey
+                                if (SingleKeyPress(Keys.Enter))
+                                {
+                                    gameState = GameState.Passive;
+                                    monkeys.Add(new Monkey(
+                                        monkeyTexture,  // Monkey Texutre
+                                        circle,         // Range Circle texture
+                                        dart,           // Projectile Texture
+                                        (int)((OverlayPos.X + 0.05f) * tileSize),   // X
+                                        (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
+                                        (int)(tileSize * 0.9f),                     // Width
+                                        (int)(tileSize * 0.9f),                     // Height
+                                        1,                  // Damage
+                                        21.1f,                  // Attack Speed
+                                        (int)(3.1f * tileSize),// Range
+                                        2500,                // Cost
+                                        1,                  // Pierce
+                                        balloons));         // Balloons List
+                                    buyTower(2500);
+
+                                }
+                            }
+                            break;
                     }
-                    else
+                    
+                    if (SingleKeyPress(Keys.Left))
                     {
                         gameState = GameState.Passive;
                     }
+                    #endregion
                     break;
+
                 case GameState.Upgrade:
 
                     if (SingleKeyPress(Keys.Left))
@@ -169,7 +223,15 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    DrawOverlay(sb,3.1f);
+                    switch (monkeyType)
+                    {
+                        case PlaceMonkeyType.Dart:
+                            DrawOverlay(sb, 2, Color.White);
+                            break;
+                        case PlaceMonkeyType.Super:
+                            DrawOverlay(sb, 3.1f, Color.Red);
+                            break;
+                    }
 
                     break;
 
@@ -177,7 +239,6 @@ internal class MonkeyManager
                     if (monkeys.Count > selectedMonkey)
                     {
                         monkeys[selectedMonkey].drawRange(sb);
-
                     }
                     break;
             }
@@ -215,7 +276,7 @@ internal class MonkeyManager
         /// Draw the overlay before placing tower
         /// </summary>
         /// <param name="sb"></param>
-        public void DrawOverlay(SpriteBatch sb, double radius)
+        public void DrawOverlay(SpriteBatch sb, double radius, Color color)
         {
             sb.Draw(monkeyTexture,                                  // Texture
                 new Rectangle((int)((OverlayPos.X+0.05f)*tileSize), // X
@@ -228,7 +289,7 @@ internal class MonkeyManager
                             (int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (radius * tileSize)),    // Y
                             (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (radius * tileSize)),    // X
                             (int)(radius * tileSize) * 2, (int)(radius * tileSize) * 2),                                      // Radius
-                            Color.White * 0.2f);                                                                    // Tint
+                            color * 0.2f);                                                                    // Tint
         }
 
         /// <summary>
