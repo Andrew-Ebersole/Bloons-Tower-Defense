@@ -151,9 +151,15 @@ namespace DevcadeGame
         /// <param name="damageAmount"> amount of health to remove </param>
         public void Damage(int damageAmount)
         {
+            if (damageAmount > health)
+            {
+                gainMoney(health);
+            } else
+            {
+                gainMoney(damageAmount);
+            }
             health -= damageAmount;
             pop.Play();
-            gainMoney(damageAmount);
             targetDamage -= damageAmount;
         }
 

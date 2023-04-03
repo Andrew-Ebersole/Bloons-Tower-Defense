@@ -170,13 +170,20 @@ namespace DevcadeGame
                     if (singleKeyPress(Keys.Space))
                     {
                         gameState = GameState.GameOver;
-						monkeyManager.KillAllTowers();
                     }
 					if (balloonManager.RoundEnded
 						&& singleKeyPress(Keys.M))
 					{
 						round++;
 						balloonManager.StartRound(round);
+					}
+					if (singleKeyPress(Keys.N))
+					{
+						round++;
+					}
+					if (singleKeyPress(Keys.B))
+					{
+						money += 100;
 					}
                     break;
 
@@ -253,10 +260,12 @@ namespace DevcadeGame
 
 		private void StartGame()
 		{
-			money = 550;
+			money = 650;
 			lives = 150;
 			round = 0;
-			balloonManager.RemoveAllBalloons(); 
+			balloonManager.RemoveAllBalloons();
+			balloonManager.LoadRounds();
+			monkeyManager.KillAllTowers();
 		}
 
         public void LoseHealth(int amount)

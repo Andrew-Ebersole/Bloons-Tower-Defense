@@ -12,6 +12,8 @@ using System.Xml.Linq;
 using Microsoft.Xna.Framework.Audio;
 using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using BTDevcade;
+using System.Runtime.CompilerServices;
 
 namespace DevcadeGame
 {
@@ -30,11 +32,10 @@ namespace DevcadeGame
         public event LoseResource takeDamage;
         public event LoseResource gainMoney;
         private SoundEffect pop;
-        public List<List<char>> roundsList;
+        public List<List<BalloonWaveHelper>> roundsList;
         private double spawnTimer;
-        private int balloonToSpawn;
-        private List<char> currentRoundChars;
         private int round;
+        private bool endRoundRewardGiven;
 
 
         // --- Properties --- //
@@ -46,8 +47,12 @@ namespace DevcadeGame
 
         public bool RoundEnded { get
             {
-                if (balloonToSpawn >= currentRoundChars.Count
-                    && balloons.Count == 0)
+                if (round == 0)
+                {
+                    return true;
+                }
+                if (spawnTimer > EndTime(roundsList[round-1])
+                && balloons.Count == 0)
                 {
                     return true;
                 }
@@ -65,19 +70,12 @@ namespace DevcadeGame
         /// <param name="balloons"> balloon texture </param>
         public BalloonManager(Rectangle tileSize,Texture2D balloons, SoundEffect pop)
         {
-            this.balloons = new List<Balloons>();
+            balloonTexture = balloons;
+            this.pop = pop;
             this.tileSize = tileSize;
             previousKB = new KeyboardState();
             currentKB = new KeyboardState();
-            balloonTexture = balloons;
-            initilizePath();
-            this.pop = pop;
-            roundsList = new List<List<char>>();
             LoadRounds();
-            spawnTimer = 0;
-            currentRoundChars = new List<char>();
-            balloonToSpawn = 0;
-            round = 0;
         }
 
 
@@ -89,47 +87,71 @@ namespace DevcadeGame
         /// </summary>
         /// <param name="gt"></param>
         /// <param name="window"> dimensions of the screen </param>
-            public void Update(GameTime gt, Rectangle window)
+        public void Update(GameTime gt, Rectangle window)
         {
             //Keyboard input
             currentKB = Keyboard.GetState();
 
             //Spawn balloons based off round
             spawnTimer += gt.ElapsedGameTime.Milliseconds;
-            if (balloonToSpawn < currentRoundChars.Count
-                && spawnTimer > 100)
+            
+            if (round > 0)
             {
-                SpawnBalloon(currentRoundChars[balloonToSpawn], window);
-                balloonToSpawn++;
-                spawnTimer -= 100;
+                foreach (BalloonWaveHelper waveHelper in roundsList[round - 1])
+                {
+                    List<double> spawnTimesToRemove = new List<double>();
+                    spawnTimesToRemove.Clear();
+                    List<double> spawnTimes = waveHelper.SpawnTimes;
+                    foreach (double spawnTime in waveHelper.SpawnTimes)
+                    {
+                        // When the time in the list occurs
+                        if (spawnTime < spawnTimer)
+                        {
+                            SpawnBalloon(waveHelper.Health, window);
+                            spawnTimesToRemove.Add(spawnTime);
+                        }
+                        
+                    }
+                    foreach (double spawnTime in spawnTimesToRemove)
+                    {
+                        spawnTimes.Remove(spawnTime);
+                    }
+                    waveHelper.SpawnTimes = spawnTimes;
+                }
+
+                // Gain money after round ends
+                if (spawnTimer > EndTime(roundsList[round - 1])
+                    && balloons.Count == 0
+                    && endRoundRewardGiven == false)
+                {
+                    gainMoney(100 + round);
+                    endRoundRewardGiven = true;
+                }
             }
-            if (balloonToSpawn == currentRoundChars.Count
-                && balloons.Count == 0)
-            {
-                gainMoney(100 + round);
-                balloonToSpawn++;
-            }
+            
+
+            // Manual Controls to spawn and remove balloons
             #region manual controls
             // Manually Spawn Balloons
             if (currentKB.IsKeyDown(Keys.D1) && previousKB.IsKeyUp(Keys.D1))
             {
-                SpawnBalloon('1', window);
+                SpawnBalloon(1, window);
             }
             if (currentKB.IsKeyDown(Keys.D2) && previousKB.IsKeyUp(Keys.D2))
             {
-                SpawnBalloon('2', window);
+                SpawnBalloon(2, window);
             }
             if (currentKB.IsKeyDown(Keys.D3) && previousKB.IsKeyUp(Keys.D3))
             {
-                SpawnBalloon('3', window);
+                SpawnBalloon(3, window);
             }
             if (currentKB.IsKeyDown(Keys.D4) && previousKB.IsKeyUp(Keys.D4))
             {
-                SpawnBalloon('4', window);
+                SpawnBalloon(4, window);
             }
             if (currentKB.IsKeyDown(Keys.D5) && previousKB.IsKeyUp(Keys.D5))
             {
-                SpawnBalloon('5', window);
+                SpawnBalloon(5, window);
             }
 
             // Manually Pop Balloons
@@ -250,39 +272,55 @@ namespace DevcadeGame
 
         public void LoadRounds()
         {
+            balloons = new List<Balloons>();
+            initilizePath();
+            roundsList = new List<List<BalloonWaveHelper>>();
+            spawnTimer = 0;
+            round = 0;
+            endRoundRewardGiven = false;
+
+            // read input from file
             StreamReader roundInput = new StreamReader("Content/Rounds.txt");
             string line = "";
+            round = 0;
+
+            // Add all the rounds
             while ((line = roundInput.ReadLine()) != null)
             {
-                List<char> chars = new List<char>();
-                for (int i = 0; i < line.Length; i++)
+                List<BalloonWaveHelper> currentWave = new List<BalloonWaveHelper>();
+                string[] wave = line.Split(',');
+
+                // Add all the waves to the round
+                for (int i = 0; i < wave.Length; i++)
                 {
-                    chars.Add(line[i]);
+                    string[] waveValues = wave[i].Split(":");
+                    currentWave.Add(new BalloonWaveHelper(
+                        int.Parse(waveValues[0]),       // # Of Balloons
+                        int.Parse(waveValues[1]),       // Health
+                        int.Parse(waveValues[2]),       // Start Time *milliseconds*
+                        int.Parse(waveValues[3])));     // End Time *milliseconds*
                 }
-                roundsList.Add(chars);
+                roundsList.Add(currentWave);
             }
+
             roundInput.Close();
         }
 
         public void StartRound(int round)
         {
-            if (roundsList.Count >= round)
-            {
-                currentRoundChars = roundsList[round - 1];
-                spawnTimer = 0;
-                balloonToSpawn = 0;
-                this.round = round;
-            }
+            spawnTimer = 0;
+            this.round = round;
+            endRoundRewardGiven = false;
+            System.Diagnostics.Debug.Print($"{spawnTimer}");
         }
 
-        public void SpawnBalloon(char balloonValue, Rectangle window)
+        public void SpawnBalloon(int balloonValue, Rectangle window)
         {
-            int health = int.Parse($"{balloonValue}");
-            if (health > 0)
+            if (balloonValue > 0)
             {
                 balloons.Add(new Balloons(
                     balloonTexture, 0, 0, 26 * window.Width / 420, 30 * window.Width / 420,
-                    health,
+                    balloonValue,
                     Map1path,
                     pop));
                 balloons[balloons.Count - 1].takeDamage += TakeDamage;
@@ -290,5 +328,22 @@ namespace DevcadeGame
             }
         }
 
+        /// <summary>
+        /// Returns the spawn of the last balloon in the round
+        /// </summary>
+        /// <returns></returns>
+        public double EndTime(List<BalloonWaveHelper> waveHelper)
+        {
+            // Calculates the time the last balloon is spawned
+            double endTime = 0;
+            foreach (BalloonWaveHelper b in waveHelper)
+            {
+                if (b.EndTime > endTime)
+                {
+                    endTime = b.EndTime;
+                }
+            }
+            return endTime;
+        }
     }
 }
