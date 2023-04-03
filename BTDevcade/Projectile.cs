@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using System.Runtime.CompilerServices;
 
 namespace DevcadeGame
 {
@@ -19,8 +20,12 @@ namespace DevcadeGame
         private Vector2 direction;
         private int damage;
         private Balloons target;
-        private bool active;
         private float rotation;
+        private int pierce;
+        private List<Balloons> balloons;
+        private int distance;
+        private int maxDistance;
+        
 
 
 
@@ -28,21 +33,33 @@ namespace DevcadeGame
 
         public bool Active
         {
-            get { return active; }
+            get
+            {
+                if (pierce > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
         }
 
 
 
         // --- Constructor --- //
 
-        public Projectile(Texture2D texture, int x, int y, int width, int height, int speed, int damage, Balloons b) 
+        public Projectile(Texture2D texture, int x, int y, int width, int height, int speed,
+            int damage, Balloons b, int pierce, List<Balloons> balloons, int maxDistance) 
             : base(texture, x, y, width, height)
         {
             this.speed = speed;
             this.damage = damage;
             target = b;
-            active = true;
             rotation = RotationAngle();
+            this.pierce = pierce;
+            this.balloons = balloons;
+            direction = DirectionVector();
+            distance = 0;
+            this.maxDistance = maxDistance;
         }
 
 
@@ -52,11 +69,20 @@ namespace DevcadeGame
         public override void Update(GameTime gameTime, Rectangle windowDimensions)
         {
             
-            position += speed * DirectionVector();
-            if (target.Rectangle.Intersects(rectangle))
+            position += speed * direction;
+            distance += speed;
+            if (distance > maxDistance)
             {
-                active = false;
-                target.Damage(damage);
+                pierce = 0;
+            }
+            foreach (Balloons b in balloons)
+            {
+                if (b.Rectangle.Intersects(rectangle)
+                    && Active)
+                {
+                    pierce -= 1;
+                    b.Damage(damage);
+                }
             }
             base.Update(gameTime, windowDimensions);
         }
@@ -64,7 +90,7 @@ namespace DevcadeGame
         public override void Draw(SpriteBatch sb)
         {
             rectangle = new Rectangle((int)position.X, (int)position.Y, rectangle.Width, rectangle.Height);
-            if (active)
+            if (pierce > 0)
             {
                 sb.Draw(texture,
                 rectangle,

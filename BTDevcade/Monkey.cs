@@ -16,8 +16,8 @@ namespace DevcadeGame
         // --- Fields --- //
 
         private int damage;
-        private int attackSpeed;
-        private int range;
+        private double attackSpeed;
+        private double range;
         private int cost;
         private Vector2 direction;
         private double timeSinceLastShot;
@@ -26,6 +26,8 @@ namespace DevcadeGame
         private float rotation;
         private float tileSize;
         private List<Projectile> projectiles;
+        private List<Balloons> balloons;
+        private int pierce;
 
 
         // --- Properties --- //
@@ -37,7 +39,7 @@ namespace DevcadeGame
         // --- Constructor --- //
 
         public Monkey(Texture2D texture, Texture2D circle, Texture2D dart, int x, int y, int width, int height,
-            int damage, int attackSpeed, int range, int cost) 
+            int damage, double attackSpeed, double range, int cost, int pierce, List<Balloons> balloons) 
             : base(texture, x, y, width, height)
         {
             this.damage = damage;
@@ -46,6 +48,8 @@ namespace DevcadeGame
             this.cost = cost;
             this.circle = circle;
             this.dart = dart;
+            this.pierce = pierce;
+            this.balloons = balloons;
             rotation = 0f * (float)Math.PI;
             projectiles = new List<Projectile>();
         }
@@ -89,11 +93,9 @@ namespace DevcadeGame
                 //target.HighlightRed();
                 rotation = RotationAngle(target);
 
-                if (timeSinceLastShot > 1000 / attackSpeed
-                    && BalloonInRange(target)
-                    && target.TargetDamage < target.Health)
+                if (timeSinceLastShot > 950 / attackSpeed
+                    && BalloonInRange(target))
                 {
-                    target.TargetDamage += damage;
                     timeSinceLastShot = 0;
                     shoot(target);
                 }
@@ -121,7 +123,8 @@ namespace DevcadeGame
 
         private void shoot(Balloons b)
         {
-            projectiles.Add(new Projectile(dart,rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Width/2,8,16,8,1,b));
+            projectiles.Add(new Projectile(dart,rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Width/2,
+                12,16,8,1,b,pierce,balloons,(int)(tileSize*6)));
         }
 
         public override void Draw(SpriteBatch sb)

@@ -95,13 +95,11 @@ namespace DevcadeGame
             //Spawn balloons based off round
             spawnTimer += gt.ElapsedGameTime.Milliseconds;
             
-            if (round > 0)
+            if (round > 0 && round <= roundsList.Count)
             {
                 foreach (BalloonWaveHelper waveHelper in roundsList[round - 1])
                 {
                     List<double> spawnTimesToRemove = new List<double>();
-                    spawnTimesToRemove.Clear();
-                    List<double> spawnTimes = waveHelper.SpawnTimes;
                     foreach (double spawnTime in waveHelper.SpawnTimes)
                     {
                         // When the time in the list occurs
@@ -114,9 +112,8 @@ namespace DevcadeGame
                     }
                     foreach (double spawnTime in spawnTimesToRemove)
                     {
-                        spawnTimes.Remove(spawnTime);
+                        waveHelper.SpawnTimes.Remove(spawnTime);
                     }
-                    waveHelper.SpawnTimes = spawnTimes;
                 }
 
                 // Gain money after round ends
@@ -187,16 +184,21 @@ namespace DevcadeGame
             }
             #endregion
 
-            // Remove popped balloons
-            int removedBalloons = 0;
-            for (int i = 0; i < balloons.Count; i++)
+            // Update Balloons and check if popped
+            List<Balloons> poppedBalloons = new List<Balloons>();
+            foreach (Balloons b in balloons)
             {
-                balloons[i - removedBalloons].Update(gt,window);
-                if (balloons[i - removedBalloons].Health <= 0)
+                b.Update(gt, window);
+                if (b.Health <= 0)
                 {
-                    balloons.RemoveAt(i);
-                    removedBalloons++;
+                    poppedBalloons.Add(b);
                 }
+            }
+
+            // Remove Popped Balloons
+            foreach (Balloons b in poppedBalloons)
+            {
+                balloons.Remove(b);
             }
 
             // Previous Keyboard state

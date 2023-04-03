@@ -77,13 +77,13 @@ internal class MonkeyManager
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> bloons)
+        public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> balloons)
         {
             currentKS = Keyboard.GetState();
 
             foreach(Monkey m in monkeys)
             {
-                m.Update(gt, windowDimensions, bloons);
+                m.Update(gt, windowDimensions, balloons);
             }
             switch(gameState)
             {
@@ -109,17 +109,19 @@ internal class MonkeyManager
                         {
                             gameState = GameState.Passive;
                             monkeys.Add(new Monkey(
-                                monkeyTexture,
-                                circle,
-                                dart,
-                                (int)((OverlayPos.X + 0.05f) * tileSize),
-                                (int)((OverlayPos.Y + 0.05f) * tileSize),
-                                (int)(tileSize * 0.9f),
-                                (int)(tileSize * 0.9f),
-                                1,
-                                1,
-                                (int)(2 * tileSize),
-                                200));
+                                monkeyTexture,  // Monkey Texutre
+                                circle,         // Range Circle texture
+                                dart,           // Projectile Texture
+                                (int)((OverlayPos.X + 0.05f) * tileSize),   // X
+                                (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
+                                (int)(tileSize * 0.9f),                     // Width
+                                (int)(tileSize * 0.9f),                     // Height
+                                1,                  // Damage
+                                21.1f,                  // Attack Speed
+                                (int)(3.1f * tileSize),// Range
+                                200,                // Cost
+                                1,                  // Pierce
+                                balloons));         // Balloons List
                             buyTower(200);
 
                         }
@@ -167,19 +169,16 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    DrawOverlay(sb);
-
-                    sb.Draw(circle,
-                        new Rectangle(
-                            (int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (2 * tileSize)),    // Y
-                            (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (2 * tileSize)),    // X
-                            (int)(2 * tileSize) * 2, (int)(2 * tileSize) * 2),                                      // Radius
-                            Color.White * 0.2f);                                                                    // Tint
+                    DrawOverlay(sb,3.1f);
 
                     break;
 
                 case GameState.Upgrade:
-                    monkeys[selectedMonkey].drawRange(sb);
+                    if (monkeys.Count > selectedMonkey)
+                    {
+                        monkeys[selectedMonkey].drawRange(sb);
+
+                    }
                     break;
             }
         }
@@ -216,13 +215,20 @@ internal class MonkeyManager
         /// Draw the overlay before placing tower
         /// </summary>
         /// <param name="sb"></param>
-        public void DrawOverlay(SpriteBatch sb)
+        public void DrawOverlay(SpriteBatch sb, double radius)
         {
             sb.Draw(monkeyTexture,                                  // Texture
                 new Rectangle((int)((OverlayPos.X+0.05f)*tileSize), // X
                 (int)((OverlayPos.Y + 0.05f) * tileSize),           // Y
                 (int)(tileSize * 0.9f), (int)(tileSize * 0.9f)),    // Size   
                 Color.White * 0.5f);                                // Tint
+
+            sb.Draw(circle,
+                        new Rectangle(
+                            (int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (radius * tileSize)),    // Y
+                            (int)(((OverlayPos.Y + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (radius * tileSize)),    // X
+                            (int)(radius * tileSize) * 2, (int)(radius * tileSize) * 2),                                      // Radius
+                            Color.White * 0.2f);                                                                    // Tint
         }
 
         /// <summary>
