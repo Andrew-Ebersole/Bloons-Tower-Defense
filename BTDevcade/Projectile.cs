@@ -23,6 +23,7 @@ namespace DevcadeGame
         private float rotation;
         private int pierce;
         private List<Balloons> balloons;
+        private List<Balloons> piercedBalloons;
         private int distance;
         private int maxDistance;
         
@@ -60,6 +61,7 @@ namespace DevcadeGame
             direction = DirectionVector();
             distance = 0;
             this.maxDistance = maxDistance;
+            piercedBalloons = new List<Balloons>();
         }
 
 
@@ -78,10 +80,12 @@ namespace DevcadeGame
             foreach (Balloons b in balloons)
             {
                 if (b.Rectangle.Intersects(rectangle)
-                    && Active)
+                    && Active
+                    && NotPierced(b))
                 {
                     pierce -= 1;
                     b.Damage(damage);
+                    piercedBalloons.Add(b);
                 }
             }
             base.Update(gameTime, windowDimensions);
@@ -95,7 +99,7 @@ namespace DevcadeGame
                 sb.Draw(texture,
                 rectangle,
                 null,
-                Color.White,
+                Color.LightGray,
                 rotation,
                 new Vector2(rectangle.X + rectangle.Width / 2, rectangle.Y + rectangle.Height / 2),
                 SpriteEffects.None,
@@ -123,6 +127,24 @@ namespace DevcadeGame
             float rotationAngle = angle - (float)(Math.PI / 2);
 
             return rotationAngle;
+        }
+
+        /// <summary>
+        /// Returns true if the balloons has not been pierced by the projectile
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        private bool NotPierced(Balloons b)
+        {
+            bool result = true;
+            foreach (Balloons pierecdBalloon in piercedBalloons)
+            {
+                if (pierecdBalloon == b)
+                {
+                    result = false;
+                }
+            }
+            return result;
         }
 
     }

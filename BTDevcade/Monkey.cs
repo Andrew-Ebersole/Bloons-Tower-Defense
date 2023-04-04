@@ -124,7 +124,7 @@ namespace DevcadeGame
         private void shoot(Balloons b)
         {
             projectiles.Add(new Projectile(dart,rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Width/2,
-                12,16,8,1,b,pierce,balloons,(int)(tileSize*6)));
+                9,16,10,1,b,pierce,balloons,(int)(tileSize*6)));
         }
 
         public override void Draw(SpriteBatch sb)

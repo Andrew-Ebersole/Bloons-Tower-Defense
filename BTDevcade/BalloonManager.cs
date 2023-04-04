@@ -313,7 +313,6 @@ namespace DevcadeGame
             spawnTimer = 0;
             this.round = round;
             endRoundRewardGiven = false;
-            System.Diagnostics.Debug.Print($"{spawnTimer}");
         }
 
         public void SpawnBalloon(int balloonValue, Rectangle window)

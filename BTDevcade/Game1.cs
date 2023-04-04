@@ -192,6 +192,7 @@ namespace DevcadeGame
                     {
                         gameState = GameState.Menu;
                     }
+                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
                     break;
 			}
 
@@ -231,6 +232,7 @@ namespace DevcadeGame
 				case GameState.GameOver:
                     contentManager.Draw(_spriteBatch);
                     balloonManager.Draw(_spriteBatch);
+					monkeyManager.Draw(_spriteBatch);
                     DrawText(_spriteBatch);
 					_spriteBatch.DrawString(
 						testFont,

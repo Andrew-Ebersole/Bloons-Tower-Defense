@@ -97,16 +97,34 @@ internal class MonkeyManager
             switch(gameState)
             {
                 case GameState.Passive:
-                    if (SingleKeyPress(Keys.Q))
+
+                    // Place monkey if you have enough money
+                    if (SingleKeyPress(Keys.Q)
+                        && money > 200)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Dart;
                     }
-                    if (SingleKeyPress(Keys.E))
+                    if (SingleKeyPress(Keys.E)
+                        && money > 2500)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Super;
                     }
+                    if (SingleKeyPress(Keys.R)
+                        && money > 350)
+                    {
+                        gameState = GameState.Place;
+                        monkeyType = PlaceMonkeyType.Sniper;
+                    }
+                    if (SingleKeyPress(Keys.T)
+                        && money > 280)
+                    {
+                        gameState = GameState.Place;
+                        monkeyType = PlaceMonkeyType.Tack;
+                    }
+
+                    // View range and upgrades
                     if (SingleKeyPress(Keys.Right))
                     {
                         gameState = GameState.Upgrade;
@@ -117,6 +135,7 @@ internal class MonkeyManager
                 case GameState.Place:
                     #region Place Monkeys
 
+                    // Place monkey depending on type of tower
                     switch (monkeyType)
                     {
                         case PlaceMonkeyType.Dart:
@@ -178,6 +197,7 @@ internal class MonkeyManager
                             break;
                     }
                     
+                    // Cancel purchase
                     if (SingleKeyPress(Keys.Left))
                     {
                         gameState = GameState.Passive;
@@ -187,6 +207,7 @@ internal class MonkeyManager
 
                 case GameState.Upgrade:
 
+                    // Change monkey that is selected
                     if (SingleKeyPress(Keys.Left))
                     {
                         selectedMonkey--;
@@ -200,6 +221,7 @@ internal class MonkeyManager
                     {
                         selectedMonkey = 0;
                     }
+                    // Exit selected monkey viewing mode
                     if (selectedMonkey == -1)
                     {
                         gameState = GameState.Passive;
