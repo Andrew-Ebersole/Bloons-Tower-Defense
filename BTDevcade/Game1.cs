@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using Devcade;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using System.Collections.Generic;
 
 
 // Andrew Ebersole
@@ -55,7 +56,8 @@ namespace DevcadeGame
 		// Fonts
 		private SpriteFont testFont;
 
-		
+		// Textures
+		private List<Texture2D> towerTextures;
 
 		#endregion
 		/// <summary>
@@ -111,17 +113,25 @@ namespace DevcadeGame
 		protected override void LoadContent()
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
-	
+
 			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
 
-            balloonManager = new BalloonManager(new Rectangle(windowTileSize,windowTileSize,
-				windowTileSize,windowTileSize),
+			balloonManager = new BalloonManager(new Rectangle(windowTileSize, windowTileSize,
+				windowTileSize, windowTileSize),
 				Content.Load<Texture2D>("defaultBloon"),
 				Content.Load<SoundEffect>("Pop"));
 			balloonManager.takeDamage += LoseHealth;
 			balloonManager.gainMoney += GainMoney;
 
-			monkeyManager = new MonkeyManager(Content.Load<Texture2D>("dartMonkey"),
+			towerTextures = new List<Texture2D>
+			{
+				Content.Load<Texture2D>("dartMonkey"),
+				Content.Load<Texture2D>("TackShooter"),
+				Content.Load<Texture2D>("Sniper"),
+				Content.Load<Texture2D>("SuperMonkey")
+			};
+
+			monkeyManager = new MonkeyManager(towerTextures,
 				windowTileSize, 
 				Content.Load<Texture2D>("circle"),
 				Content.Load<Texture2D>("dart"));
@@ -268,6 +278,7 @@ namespace DevcadeGame
 			balloonManager.RemoveAllBalloons();
 			balloonManager.LoadRounds();
 			monkeyManager.KillAllTowers();
+			monkeyManager.DisablePathSpawning(balloonManager.Map1Path);
 		}
 
         public void LoseHealth(int amount)

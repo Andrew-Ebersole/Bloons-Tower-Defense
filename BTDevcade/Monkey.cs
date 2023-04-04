@@ -28,6 +28,7 @@ namespace DevcadeGame
         private List<Projectile> projectiles;
         private List<Balloons> balloons;
         private int pierce;
+        private Vector2 orgin;
 
 
         // --- Properties --- //
@@ -39,7 +40,7 @@ namespace DevcadeGame
         // --- Constructor --- //
 
         public Monkey(Texture2D texture, Texture2D circle, Texture2D dart, int x, int y, int width, int height,
-            int damage, double attackSpeed, double range, int cost, int pierce, List<Balloons> balloons) 
+            int damage, double attackSpeed, double range, int cost, int pierce, List<Balloons> balloons, Vector2 orgin) 
             : base(texture, x, y, width, height)
         {
             this.damage = damage;
@@ -50,6 +51,7 @@ namespace DevcadeGame
             this.dart = dart;
             this.pierce = pierce;
             this.balloons = balloons;
+            this.orgin = orgin;
             rotation = 0f * (float)Math.PI;
             projectiles = new List<Projectile>();
         }
@@ -123,19 +125,18 @@ namespace DevcadeGame
 
         private void shoot(Balloons b)
         {
-            projectiles.Add(new Projectile(dart,rectangle.X+rectangle.Width/2,rectangle.Y+rectangle.Width/2,
+            projectiles.Add(new Projectile(dart,rectangle.X,rectangle.Y,
                 9,16,10,1,b,pierce,balloons,(int)(tileSize*6)));
         }
 
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(texture,
-                new Rectangle(rectangle.X + (int)(tileSize * 0.58f),rectangle.Y + (int)(tileSize * 0.55f),
-                rectangle.Width,rectangle.Height),
+                rectangle,
                 null,
                 Color.White,
                 rotation,
-                new Vector2(rectangle.Width *2.0f, rectangle.Height *2.0f),
+                orgin,
                 SpriteEffects.None,
                 0);
 
@@ -148,7 +149,7 @@ namespace DevcadeGame
         public void drawRange(SpriteBatch sb)
         {
             sb.Draw(circle,
-                new Rectangle((int)((rectangle.X + rectangle.Width / 2) - range), (int)((rectangle.Y + rectangle.Height / 2) - range),
+                new Rectangle((int)((rectangle.X)- range), (int)((rectangle.Y)-range),
                 (int)range*2,(int)range*2),
                 Color.White * 0.2f);
         }

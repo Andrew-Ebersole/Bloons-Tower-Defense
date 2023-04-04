@@ -60,6 +60,7 @@ namespace DevcadeGame
             } 
         }
 
+        public List<Vector2> Map1Path { get { return Map1path; } }
 
         // --- Constructor --- //
 

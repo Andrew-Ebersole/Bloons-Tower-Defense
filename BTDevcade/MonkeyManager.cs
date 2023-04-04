@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.ComponentModel;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DevcadeGame
 {
@@ -37,9 +38,9 @@ internal class MonkeyManager
         // Keystates
         private KeyboardState currentKS;
         private KeyboardState previousKS;
-        
+
         // Textures
-        Texture2D monkeyTexture;
+        List<Texture2D> towerTextures;
         Texture2D circle;
         Texture2D dart;
 
@@ -49,6 +50,9 @@ internal class MonkeyManager
         // Event
         public event LoseResource buyTower;
 
+        // Collision Grid
+        private bool[,] canPlace;
+
         // --- Properties --- //
 
 
@@ -57,7 +61,7 @@ internal class MonkeyManager
 
         // --- Constructor --- //
 
-        public MonkeyManager(Texture2D monkeyTexture, float tileSize, Texture2D circle, Texture2D dart)
+        public MonkeyManager(List<Texture2D> towerTextures, float tileSize, Texture2D circle, Texture2D dart)
         {
             // Game State
             gameState = GameState.Passive;
@@ -74,12 +78,15 @@ internal class MonkeyManager
             monkeys = new List<Monkey>();
 
             // Textures
-            this.monkeyTexture = monkeyTexture;
+            this.towerTextures = towerTextures;
             this.circle = circle;
             this.dart = dart;
 
             selectedMonkey = -1;
             monkeyType = PlaceMonkeyType.Dart;
+
+            // Make sure the towers aren't placed on map
+            canPlace = new bool[12, 28];
         }
 
 
@@ -144,15 +151,16 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter))
+                                if (SingleKeyPress(Keys.Enter)
+                                    && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
                                     monkeys.Add(new Monkey(
-                                        monkeyTexture,  // Monkey Texutre
+                                        towerTextures[0],  // Monkey Texutre
                                         circle,         // Range Circle texture
                                         dart,           // Projectile Texture
-                                        (int)((OverlayPos.X + 0.05f) * tileSize),   // X
-                                        (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
+                                        (int)((OverlayPos.X) * tileSize + tileSize * 0.46f),   // X
+                                        (int)((OverlayPos.Y) * tileSize + tileSize * 0.53f),   // Y
                                         (int)(tileSize * 0.9f),                     // Width
                                         (int)(tileSize * 0.9f),                     // Height
                                         1,                  // Damage
@@ -160,9 +168,11 @@ internal class MonkeyManager
                                         (int)(2 * tileSize),// Range
                                         200,                // Cost
                                         2,                  // Pierce
-                                        balloons));         // Balloons List
+                                        balloons,           // Balloons list
+                                        new Vector2((int)(tileSize * 0.9f) * 1.5f, // Orgin X
+                                        (int)(tileSize * 0.9f) * 2.0f)));         // Orgin Y
                                     buyTower(200);
-
+                                    canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
                                 }
                             }
                             break;
@@ -173,11 +183,12 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter))
+                                if (SingleKeyPress(Keys.Enter)
+                                    && canPlace[(int)OverlayPos.X,(int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
                                     monkeys.Add(new Monkey(
-                                        monkeyTexture,  // Monkey Texutre
+                                        towerTextures[3],  // Monkey Texutre
                                         circle,         // Range Circle texture
                                         dart,           // Projectile Texture
                                         (int)((OverlayPos.X + 0.05f) * tileSize),   // X
@@ -189,9 +200,11 @@ internal class MonkeyManager
                                         (int)(3.1f * tileSize),// Range
                                         2500,                // Cost
                                         1,                  // Pierce
-                                        balloons));         // Balloons List
+                                        balloons,           // Balloons list
+                                        new Vector2 ((int)(tileSize * 0.9f) * 1.0f, // Orgin X
+                                        (int)(tileSize * 0.9f) * 1.0f)));         // Orgin Y
                                     buyTower(2500);
-
+                                    canPlace[(int)OverlayPos.X,(int)OverlayPos.Y] = false;
                                 }
                             }
                             break;
@@ -235,6 +248,7 @@ internal class MonkeyManager
 
         public void Draw(SpriteBatch sb)
         {
+            // Draw All the monkeys
             foreach(Monkey m in monkeys)
             {
                 m.Draw(sb);
@@ -245,19 +259,12 @@ internal class MonkeyManager
                     break;
 
                 case GameState.Place:
-                    switch (monkeyType)
-                    {
-                        case PlaceMonkeyType.Dart:
-                            DrawOverlay(sb, 2, Color.White);
-                            break;
-                        case PlaceMonkeyType.Super:
-                            DrawOverlay(sb, 3.1f, Color.Red);
-                            break;
-                    }
-
+                    // Draw place overlay to show where to place the tower
+                    DrawOverlay(sb);
                     break;
 
                 case GameState.Upgrade:
+                    // Draw the range of the selected tower
                     if (monkeys.Count > selectedMonkey)
                     {
                         monkeys[selectedMonkey].drawRange(sb);
@@ -298,14 +305,50 @@ internal class MonkeyManager
         /// Draw the overlay before placing tower
         /// </summary>
         /// <param name="sb"></param>
-        public void DrawOverlay(SpriteBatch sb, double radius, Color color)
+        public void DrawOverlay(SpriteBatch sb)
         {
-            sb.Draw(monkeyTexture,                                  // Texture
-                new Rectangle((int)((OverlayPos.X+0.05f)*tileSize), // X
-                (int)((OverlayPos.Y + 0.05f) * tileSize),           // Y
+            Texture2D towerTexture = null;
+            float radius = 0;
+            Color color = Color.White;
+
+            // Determine monkey type
+            switch (monkeyType)
+            {
+                case PlaceMonkeyType.Dart:
+                    towerTexture = towerTextures[0];
+                    radius = 2f;
+                    break;
+                case PlaceMonkeyType.Tack:
+                    towerTexture = towerTextures[1];
+                    radius = 1.43f;
+                    break;
+                case PlaceMonkeyType.Sniper:
+                    towerTexture = towerTextures[2];
+                    radius = 1.25f;
+                    break;
+                case PlaceMonkeyType.Super:
+                    towerTexture = towerTextures[3];
+                    radius = 3.1f;
+                    break;
+            }
+
+            // Determine if can place or not
+            if (canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
+            {
+                color = Color.White;
+            } else
+            {
+                color = Color.Red;
+            }
+
+            // Draw Tower
+            sb.Draw(towerTexture,                                  // Texture
+                new Rectangle((int)((OverlayPos.X*tileSize) + tileSize * 0.05f), // X
+                (int)((OverlayPos.Y * tileSize) + tileSize * 0.05f),           // Y
                 (int)(tileSize * 0.9f), (int)(tileSize * 0.9f)),    // Size   
                 Color.White * 0.5f);                                // Tint
 
+            // Draw Range
             sb.Draw(circle,
                         new Rectangle(
                             (int)(((OverlayPos.X + 0.05f) * tileSize + (tileSize * 0.9f) / 2) - (radius * tileSize)),    // Y
@@ -336,6 +379,57 @@ internal class MonkeyManager
         public void KillAllTowers()
         {
             monkeys.Clear();
+        }
+
+        public void DisablePathSpawning(List<Vector2> path)
+        {
+            // set all values to true
+            for (int x = 0; x < 12; x++)
+            {
+                for (int y = 0; y < 28; y++)
+                {
+                    canPlace[x, y] = true;
+                }
+            }
+
+            // Connect every tile in the path with false
+            // Vectors in the list are corners so go until you get to the next corner
+            int pathPosition = 0;
+            Vector2 currentPosition = path[0];
+            while (pathPosition < path.Count)
+            {
+                // Set current tile in the path to false
+                Vector2 tilePos = new Vector2(
+                    (int)((currentPosition.X - tileSize / 2)/ tileSize),
+                    (int)((currentPosition.Y - tileSize / 2)/ tileSize));
+                
+                if (tilePos.X >= 0 && tilePos.X < 12 && tilePos.Y >= 0 && tilePos.Y < 28)
+                {
+                    canPlace[(int)tilePos.X, (int)tilePos.Y] = false;
+                }
+
+
+                if (path[pathPosition].X < currentPosition.X)
+                {
+                    currentPosition.X -= tileSize;
+                }
+                if (path[pathPosition].Y < currentPosition.Y)
+                {
+                    currentPosition.Y -= tileSize;
+                }
+                if (path[pathPosition].X > currentPosition.X)
+                {
+                    currentPosition.X += tileSize;
+                }
+                if (path[pathPosition].Y > currentPosition.Y)
+                {
+                    currentPosition.Y += tileSize;
+                }
+                if (currentPosition == path[pathPosition])
+                {
+                    pathPosition++;
+                }
+            }
         }
     }
 }
