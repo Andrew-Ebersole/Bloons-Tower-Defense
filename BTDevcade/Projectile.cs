@@ -49,30 +49,29 @@ namespace DevcadeGame
         // --- Constructor --- //
 
         public Projectile(Texture2D texture, int x, int y, int width, int height, int speed,
-            int damage, Balloons b, int pierce, List<Balloons> balloons, int maxDistance) 
+            int damage, int pierce, Vector2 direction, int maxDistance, List<Balloons> balloons) 
             : base(texture, x, y, width, height)
         {
             this.speed = speed;
             this.damage = damage;
-            target = b;
-            rotation = RotationAngle();
             this.pierce = pierce;
             this.balloons = balloons;
-            direction = DirectionVector();
+            this.direction = direction;
             distance = 0;
             this.maxDistance = maxDistance;
             piercedBalloons = new List<Balloons>();
+            rotation = RotationAngle();
         }
 
 
 
         // --- Methods --- //
 
-        public override void Update(GameTime gameTime, Rectangle windowDimensions)
+        public void Update(GameTime gameTime, Rectangle windowDimensions, float gameSpeed)
         {
             
-            position += speed * direction;
-            distance += speed;
+            position += speed * direction * gameSpeed;
+            distance += (int)(speed * gameSpeed);
             if (distance > maxDistance)
             {
                 pierce = 0;
@@ -107,23 +106,10 @@ namespace DevcadeGame
             }
         }
 
-        /// <summary>
-        /// Returns the direction between
-        /// </summary>
-        /// <returns></returns>
-        private Vector2 DirectionVector()
-        {
-            Vector2 result = new Vector2(target.Rectangle.X - rectangle.X,
-                target.Rectangle.Y - rectangle.Y);
-
-            result.Normalize();
-            return result;
-        }
-
         public float RotationAngle()
         {
-            float angle = (float)Math.Atan2((target.Rectangle.Y+target.Rectangle.Height/2) - Rectangle.Y,
-                (target.Rectangle.X+target.Rectangle.Width/2) - Rectangle.X);
+            float angle = (float)Math.Atan2(direction.Y,
+                direction.X);
             float rotationAngle = angle - (float)(Math.PI / 2);
 
             return rotationAngle;

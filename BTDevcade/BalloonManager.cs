@@ -47,12 +47,13 @@ namespace DevcadeGame
 
         public bool RoundEnded { get
             {
-                if (round == 0)
+                if (round == 0
+                    || round > roundsList.Count)
                 {
                     return true;
                 }
                 if (spawnTimer > EndTime(roundsList[round-1])
-                && balloons.Count == 0)
+                && balloons.Count == 0 && endRoundRewardGiven)
                 {
                     return true;
                 }
@@ -88,13 +89,13 @@ namespace DevcadeGame
         /// </summary>
         /// <param name="gt"></param>
         /// <param name="window"> dimensions of the screen </param>
-        public void Update(GameTime gt, Rectangle window)
+        public void Update(GameTime gt, Rectangle window, float gameSpeed, float sfxVolume)
         {
             //Keyboard input
             currentKB = Keyboard.GetState();
 
             //Spawn balloons based off round
-            spawnTimer += gt.ElapsedGameTime.Milliseconds;
+            spawnTimer += gt.ElapsedGameTime.Milliseconds * gameSpeed;
             
             if (round > 0 && round <= roundsList.Count)
             {
@@ -189,7 +190,7 @@ namespace DevcadeGame
             List<Balloons> poppedBalloons = new List<Balloons>();
             foreach (Balloons b in balloons)
             {
-                b.Update(gt, window);
+                b.Update(gt, window, gameSpeed, sfxVolume);
                 if (b.Health <= 0)
                 {
                     poppedBalloons.Add(b);

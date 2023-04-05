@@ -36,7 +36,6 @@ namespace DevcadeGame
 
 
 
-
         // --- Constructor --- //
 
         public Monkey(Texture2D texture, Texture2D circle, Texture2D dart, int x, int y, int width, int height,
@@ -60,7 +59,7 @@ namespace DevcadeGame
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions, List<Balloons> bloons)
+        public virtual void Update(GameTime gt, Rectangle windowDimensions, List<Balloons> bloons, float gameSpeed)
         {
             timeSinceLastShot += gt.ElapsedGameTime.TotalMilliseconds;
 
@@ -95,7 +94,7 @@ namespace DevcadeGame
                 //target.HighlightRed();
                 rotation = RotationAngle(target);
 
-                if (timeSinceLastShot > 950 / attackSpeed
+                if (timeSinceLastShot > 950 / (attackSpeed * gameSpeed)
                     && BalloonInRange(target))
                 {
                     timeSinceLastShot = 0;
@@ -108,7 +107,7 @@ namespace DevcadeGame
             {
                 if (p.Active)
                 {
-                    p.Update(gt, windowDimensions);
+                    p.Update(gt, windowDimensions, gameSpeed);
                 }
                 else
                 {
@@ -125,8 +124,9 @@ namespace DevcadeGame
 
         private void shoot(Balloons b)
         {
-            projectiles.Add(new Projectile(dart,rectangle.X,rectangle.Y,
-                9,16,10,1,b,pierce,balloons,(int)(tileSize*6)));
+            projectiles.Add(new Projectile(dart, rectangle.X, rectangle.Y,
+                9, 16, 10, 1, pierce, DirectionVector(b), 
+                (int)(tileSize * 6), balloons));
         }
 
         public override void Draw(SpriteBatch sb)
@@ -149,7 +149,7 @@ namespace DevcadeGame
         public void drawRange(SpriteBatch sb)
         {
             sb.Draw(circle,
-                new Rectangle((int)((rectangle.X)- range), (int)((rectangle.Y)-range),
+                new Rectangle((int)(rectangle.X-range), (int)(rectangle.Y-range),
                 (int)range*2,(int)range*2),
                 Color.White * 0.2f);
         }
@@ -166,12 +166,25 @@ namespace DevcadeGame
             return false;
         }
         
-        public float RotationAngle(GameObject g)
+        protected float RotationAngle(GameObject g)
         {
             float angle = (float)Math.Atan2(g.Rectangle.Y - Rectangle.Y, g.Rectangle.X - Rectangle.X);
             float rotationAngle = angle - (float)(Math.PI / 2);
 
             return rotationAngle;
+        }
+
+        /// <summary>
+        /// Returns the direction between
+        /// </summary>
+        /// <returns></returns>
+        private Vector2 DirectionVector(Balloons target)
+        {
+            Vector2 result = new Vector2(target.Rectangle.X - rectangle.X,
+                target.Rectangle.Y - rectangle.Y);
+
+            result.Normalize();
+            return result;
         }
     }
 }

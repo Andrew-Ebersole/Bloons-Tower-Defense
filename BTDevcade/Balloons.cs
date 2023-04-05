@@ -28,6 +28,8 @@ namespace DevcadeGame
         public float distanceTraveled;
         private SoundEffect pop;
         private ContentManager Content;
+        private float sfxLevel;
+        private int targetDamage;
 
 
 
@@ -54,40 +56,43 @@ namespace DevcadeGame
             tint = Color.White;
             distanceTraveled = 0;
             this.pop = pop;
+            targetDamage = 0;
         }
 
 
 
         // --- Methods --- //
 
-        public override void Update(GameTime gt, Rectangle windowDimensions)
+        public void Update(GameTime gt, Rectangle windowDimensions, float gameSpeed, float sfxVolume)
         {
+            sfxLevel = sfxVolume;
             // Move to next instruction if at current spot
             if (pathNum < path.Count)
             {
                 // move horizontal
-                if (position.X < path[pathNum].X-2)
+                if (position.X < path[pathNum].X- windowDimensions.Width * 0.01f)
                 {
-                    position.X += speed;
+                    position.X += speed * gameSpeed;
                 }
-                else if (position.X > path[pathNum].X+2)
+                else if (position.X > path[pathNum].X+ windowDimensions.Width * 0.01f)
                 {
-                    position.X -= speed;
+                    position.X -= speed * gameSpeed;
                 }
                 // move verticaluarly
-                if (position.Y < path[pathNum].Y-2)
+                if (position.Y < path[pathNum].Y-windowDimensions.Width*0.01f)
                 {
-                    position.Y += speed;
+                    position.Y += speed * gameSpeed;
                 }
-                else if (position.Y > path[pathNum].Y+2)
+                else if (position.Y > path[pathNum].Y+ windowDimensions.Width * 0.01f)
                 {
-                    position.Y -= speed;
+                    position.Y -= speed * gameSpeed;
                 }
-                distanceTraveled += speed;
+                distanceTraveled += speed * gameSpeed;
 
-                if ((new Rectangle(rectangle.X,rectangle.Y,(int)(windowDimensions.Width*0.01f),
-                    (int)(windowDimensions.Width*0.01f) )).Intersects(new Rectangle((int)path[pathNum].X,
-                    (int)path[pathNum].Y, (int)(windowDimensions.Width * 0.01f), (int)(windowDimensions.Width * 0.01f))))
+                if ((new Rectangle
+                    (rectangle.X,rectangle.Y,(int)(windowDimensions.Width*0.02f),(int)(windowDimensions.Width*0.02f) ))
+                    .Intersects(new Rectangle((int)path[pathNum].X,(int)path[pathNum].Y,
+                    (int)(windowDimensions.Width * 0.02f), (int)(windowDimensions.Width * 0.02f))))
                 {
                     pathNum++;
                 }
@@ -148,7 +153,8 @@ namespace DevcadeGame
         /// <param name="damageAmount"> amount of health to remove </param>
         public void Damage(int damageAmount)
         {
-            if (damageAmount > health)
+            if (damageAmount > health
+                && health > 0)
             {
                 gainMoney(health);
             } else
@@ -156,7 +162,7 @@ namespace DevcadeGame
                 gainMoney(damageAmount);
             }
             health -= damageAmount;
-            pop.Play();
+            pop.Play(sfxLevel*0.1f,-0.15f,0.0f);
         }
 
         public void HighlightRed()

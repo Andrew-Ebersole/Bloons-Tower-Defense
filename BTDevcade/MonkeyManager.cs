@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.ComponentModel;
 using System.Security.Cryptography.X509Certificates;
+using BTDevcade;
 
 namespace DevcadeGame
 {
@@ -93,39 +94,39 @@ internal class MonkeyManager
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> balloons)
+        public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> balloons, float gameSpeed)
         {
             currentKS = Keyboard.GetState();
 
             foreach(Monkey m in monkeys)
             {
-                m.Update(gt, windowDimensions, balloons);
+                m.Update(gt, windowDimensions, balloons, gameSpeed);
             }
-            switch(gameState)
+            switch (gameState)
             {
                 case GameState.Passive:
 
                     // Place monkey if you have enough money
                     if (SingleKeyPress(Keys.Q)
-                        && money > 200)
+                        && money >= 200)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Dart;
                     }
                     if (SingleKeyPress(Keys.E)
-                        && money > 2500)
+                        && money >= 2500)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Super;
                     }
                     if (SingleKeyPress(Keys.R)
-                        && money > 350)
+                        && money >= 350)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Sniper;
                     }
                     if (SingleKeyPress(Keys.T)
-                        && money > 280)
+                        && money >= 280)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Tack;
@@ -159,8 +160,8 @@ internal class MonkeyManager
                                         towerTextures[0],  // Monkey Texutre
                                         circle,         // Range Circle texture
                                         dart,           // Projectile Texture
-                                        (int)((OverlayPos.X) * tileSize + tileSize * 0.46f),   // X
-                                        (int)((OverlayPos.Y) * tileSize + tileSize * 0.53f),   // Y
+                                        (int)(OverlayPos.X * tileSize + tileSize * 0.45f),   // X
+                                        (int)(OverlayPos.Y * tileSize + tileSize * 0.45f),   // Y
                                         (int)(tileSize * 0.9f),                     // Width
                                         (int)(tileSize * 0.9f),                     // Height
                                         1,                  // Damage
@@ -172,6 +173,70 @@ internal class MonkeyManager
                                         new Vector2((int)(tileSize * 0.9f) * 1.5f, // Orgin X
                                         (int)(tileSize * 0.9f) * 2.0f)));         // Orgin Y
                                     buyTower(200);
+                                    canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
+                                }
+                            }
+                            break;
+
+                        case PlaceMonkeyType.Tack:
+                            if (money >= 280)
+                            {
+                                MoveOverlay();
+
+                                // Place monkey
+                                if (SingleKeyPress(Keys.Enter)
+                                    && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
+                                {
+                                    gameState = GameState.Passive;
+                                    monkeys.Add(new TackShooter(
+                                        towerTextures[1],  // Monkey Texutre
+                                        circle,         // Range Circle texture
+                                        dart,           // Projectile Texture
+                                        (int)(OverlayPos.X * tileSize + tileSize * 0.45f),   // X
+                                        (int)(OverlayPos.Y * tileSize + tileSize * 0.45f),   // Y
+                                        (int)(tileSize * 1f),                     // Width
+                                        (int)(tileSize * 1f),                     // Height
+                                        2,                  // Damage
+                                        0.679f,                  // Attack Speed
+                                        (int)(1.4375f * tileSize),// Range
+                                        280,                // Cost
+                                        1,                  // Pierce
+                                        balloons,           // Balloons list
+                                        new Vector2((int)(tileSize * 1f) * 1.0f, // Orgin X
+                                        (int)(tileSize * 1f) * 1.0f)));         // Orgin Y
+                                    buyTower(280);
+                                    canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
+                                }
+                            }
+                            break;
+
+                        case PlaceMonkeyType.Sniper:
+                            if (money >= 350)
+                            {
+                                MoveOverlay();
+
+                                // Place monkey
+                                if (SingleKeyPress(Keys.Enter)
+                                    && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
+                                {
+                                    gameState = GameState.Passive;
+                                    monkeys.Add(new Sniper(
+                                        towerTextures[2],  // Monkey Texutre
+                                        circle,         // Range Circle texture
+                                        dart,           // Projectile Texture
+                                        (int)(OverlayPos.X*tileSize+tileSize*0.5f),   // X
+                                        (int)(OverlayPos.Y * tileSize+tileSize*0.35f),   // Y
+                                        (int)(tileSize * 0.9f),                     // Width
+                                        (int)(tileSize * 1.5f),                     // Height
+                                        2,                  // Damage
+                                        0.597f,                  // Attack Speed
+                                        (int)(1.25f * tileSize),// Range
+                                        350,                // Cost
+                                        1,                  // Pierce
+                                        balloons,           // Balloons list
+                                        new Vector2((int)(tileSize * 1f) * 1.0f, // Orgin X
+                                        (int)(tileSize * 1.5f) * 1.0f)));         // Orgin Y
+                                    buyTower(350);
                                     canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
                                 }
                             }
@@ -191,8 +256,8 @@ internal class MonkeyManager
                                         towerTextures[3],  // Monkey Texutre
                                         circle,         // Range Circle texture
                                         dart,           // Projectile Texture
-                                        (int)((OverlayPos.X + 0.05f) * tileSize),   // X
-                                        (int)((OverlayPos.Y + 0.05f) * tileSize),   // Y
+                                        (int)(OverlayPos.X * tileSize + tileSize * 0.5f),   // X
+                                        (int)(OverlayPos.Y * tileSize + tileSize * 0.5f),   // Y
                                         (int)(tileSize * 0.9f),                     // Width
                                         (int)(tileSize * 0.9f),                     // Height
                                         1,                  // Damage

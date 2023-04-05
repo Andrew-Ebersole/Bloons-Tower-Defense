@@ -47,6 +47,8 @@ namespace DevcadeGame
 		private int round;
 		private int money;
 		private int lives;
+		private float gameSpeed;
+		private bool autoStartRound;
 
 		// Game Manager
 		private ContentManager contentManager;
@@ -58,6 +60,11 @@ namespace DevcadeGame
 
 		// Textures
 		private List<Texture2D> towerTextures;
+
+		// Background Music
+		private Song backgroundMusic;
+		private float sfxVolume;
+		private float musicVolume;
 
 		#endregion
 		/// <summary>
@@ -97,10 +104,18 @@ namespace DevcadeGame
 			// Font
 			testFont = Content.Load<SpriteFont>("testFont");
 
+			// Game Stats
 			gameState = GameState.Menu;
+			gameSpeed = 1;
+			autoStartRound = false;
 
+			// Keyboard regions
 			currentKB = new KeyboardState();
 			previousKB = new KeyboardState();
+
+			// sound and music
+			sfxVolume = 5;
+			musicVolume = 5;
 
 			base.Initialize();
 
@@ -114,6 +129,10 @@ namespace DevcadeGame
 		{
 			_spriteBatch = new SpriteBatch(GraphicsDevice);
 
+			backgroundMusic = Content.Load<Song>("BackgroundMusic");
+			MediaPlayer.Play(backgroundMusic);
+			MediaPlayer.IsRepeating = true;
+			MediaPlayer.Volume = 0.5f;
 			contentManager = new ContentManager(Content.Load<Texture2D>("TX Tileset Grass"), windowTileSize);
 
 			balloonManager = new BalloonManager(new Rectangle(windowTileSize, windowTileSize,
@@ -158,6 +177,23 @@ namespace DevcadeGame
 			}
 			currentKB = Keyboard.GetState();
 
+			// Change Game Stats
+			if (singleKeyPress(Keys.Y))
+			{
+				if (autoStartRound)
+				{
+					autoStartRound = false;
+				} else
+				{
+					autoStartRound= true;
+				}
+			}
+			if (singleKeyPress(Keys.I))
+			{
+				gameSpeed = (gameSpeed % 2) + 1;
+			} 
+			
+
 			switch (gameState)
 			{
 				case GameState.Menu:
@@ -169,9 +205,9 @@ namespace DevcadeGame
 					break;
 
 				case GameState.Game:
-                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
+                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight), gameSpeed, sfxVolume);
 					monkeyManager.Update(gameTime, new Rectangle(0,0, windowWidth, windowHeight),
-						money, balloonManager.Balloons);
+						money, balloonManager.Balloons, gameSpeed);
 
 					if (lives <= 0)
 					{
@@ -182,7 +218,8 @@ namespace DevcadeGame
                         gameState = GameState.GameOver;
                     }
 					if (balloonManager.RoundEnded
-						&& singleKeyPress(Keys.M))
+						&& (singleKeyPress(Keys.M)
+						|| autoStartRound))
 					{
 						round++;
 						balloonManager.StartRound(round);
@@ -193,7 +230,7 @@ namespace DevcadeGame
 					}
 					if (singleKeyPress(Keys.B))
 					{
-						money += 100;
+						money += 1000;
 					}
                     break;
 
@@ -202,7 +239,7 @@ namespace DevcadeGame
                     {
                         gameState = GameState.Menu;
                     }
-                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight));
+                    balloonManager.Update(gameTime, new Rectangle(0, 0, windowWidth, windowHeight), gameSpeed, sfxVolume);
                     break;
 			}
 
@@ -279,6 +316,7 @@ namespace DevcadeGame
 			balloonManager.LoadRounds();
 			monkeyManager.KillAllTowers();
 			monkeyManager.DisablePathSpawning(balloonManager.Map1Path);
+			autoStartRound = false;
 		}
 
         public void LoseHealth(int amount)
