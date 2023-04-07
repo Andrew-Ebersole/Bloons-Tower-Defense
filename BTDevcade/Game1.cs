@@ -399,8 +399,7 @@ namespace DevcadeGame
 
                     _spriteBatch.DrawString(
                         smallFont,
-                        $"Pause/" +
-                        $"\nStart",
+                        $"Select",
                         new Vector2(windowWidth * 0.88f, windowHeight * 0.942f),
                         Color.LightGoldenrodYellow);
 
