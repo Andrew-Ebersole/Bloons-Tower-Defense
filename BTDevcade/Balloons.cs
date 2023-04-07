@@ -30,7 +30,7 @@ namespace DevcadeGame
         private ContentManager Content;
         private float sfxLevel;
         private int targetDamage;
-        private int didPop;
+        private bool didPop;
         private int count;
 
 
@@ -41,7 +41,7 @@ namespace DevcadeGame
 
         public float DistanceTraveled { get { return distanceTraveled; } }
 
-        public int DidPop
+        public bool DidPop
         {
             get
             {
@@ -67,7 +67,7 @@ namespace DevcadeGame
             distanceTraveled = 0;
             this.pop = pop;
             targetDamage = 0;
-            didPop = 0;
+            didPop = false;
             count = 1;
         }
 
@@ -75,7 +75,7 @@ namespace DevcadeGame
 
         // --- Methods --- //
 
-        public void Update(GameTime gt, Rectangle windowDimensions, float gameSpeed, float sfxVolume, int count)
+        public void Update(GameTime gt, Rectangle windowDimensions, float gameSpeed, float sfxVolume, int count, bool didPop)
         {
             sfxLevel = sfxVolume;
             didPop = this.didPop;
@@ -176,7 +176,12 @@ namespace DevcadeGame
                 gainMoney(damageAmount);
             }
             health -= damageAmount;
-            pop.Play((sfxLevel * 0.1f) / (int)Math.Sqrt(count), -0.15f, 0.0f);
+            if (!didPop)
+            {
+                pop.Play((sfxLevel * 0.1f) / (int)Math.Sqrt(count), -0.15f, 0.0f);
+                didPop = true;
+            }
+
         }
 
         public void HighlightRed()

@@ -193,10 +193,14 @@ namespace DevcadeGame
             List<Balloons> poppedBalloons = new List<Balloons>();
             foreach (Balloons b in balloons)
             {
-                b.Update(gt, window, gameSpeed, sfxVolume, balloons.Count);
+                b.Update(gt, window, gameSpeed, sfxVolume, balloons.Count, didPop);
                 if (b.Health <= 0)
                 {
                     poppedBalloons.Add(b);
+                }
+                if (b.DidPop)
+                {
+                    didPop = true;
                 }
                 // Only play pop sound effect once when two balloons are popped at the same time
             }
