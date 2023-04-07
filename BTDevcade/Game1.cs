@@ -306,7 +306,20 @@ namespace DevcadeGame
                     {
                         gameState = GameState.GameOver;
                     }
-					if (balloonManager.RoundEnded
+                    if ((singleKeyPress(Keys.K)
+                        || Input.GetButton(1, Input.ArcadeButtons.B3))
+                        && !balloonManager.RoundEnded)
+                    {
+                        if (gameSpeed > 0)
+                        {
+                            gameSpeed = 0;
+                        }
+                        else
+                        {
+                            gameSpeed = 1;
+                        }
+                    }
+                    if (balloonManager.RoundEnded
 						&& ((singleKeyPress(Keys.M)
 						|| Input.GetButton(1, Input.ArcadeButtons.B4))
 						|| autoStartRound))
@@ -322,17 +335,7 @@ namespace DevcadeGame
 					{
 						money += 1000;
 					}
-                    if (singleKeyPress(Keys.K)
-                        || Input.GetButton(1, Input.ArcadeButtons.B3))
-                    {
-                        if (gameSpeed > 0)
-						{
-							gameSpeed = 0;
-						} else
-						{
-							gameSpeed = 1;
-						}
-                    }
+                    
                     break;
 
 				case GameState.GameOver:
@@ -400,6 +403,21 @@ namespace DevcadeGame
                     DrawText(_spriteBatch);
 					DrawButtons(_spriteBatch);
 
+					if (gameSpeed == 0)
+					{
+                        _spriteBatch.Draw(background,
+                        new Rectangle((int)(windowWidth * 0.2f),
+                        (int)(windowHeight * 0.45f),
+                        (int)(windowWidth * 0.6f),
+                        (int)(windowHeight * 0.1f)),
+                        Color.Black * 0.4f);
+
+                        _spriteBatch.DrawString(
+                            testFont,
+                            "PAUSED",
+                            new Vector2(windowWidth * 0.37f, windowHeight * 0.48f),
+                            Color.White);
+                    }
                     break;
 
 				case GameState.GameOver:
@@ -428,6 +446,18 @@ namespace DevcadeGame
                         "HAHA LOSER",
                         new Vector2(windowWidth * 0.28f, windowHeight * 0.5f),
                         Color.White);
+
+                    _spriteBatch.Draw(buttonIcon,
+                new Rectangle((int)(windowWidth * 0.80f), (int)(windowHeight * 0.94f),
+                (int)(windowHeight * 0.03f), (int)(windowHeight * 0.03f)),
+                Color.Purple);
+
+                    _spriteBatch.DrawString(
+                        smallFont,
+                        $"Return\n" +
+                        $"to Menu",
+                        new Vector2(windowWidth * 0.87f, windowHeight * 0.942f),
+                        Color.LightGoldenrodYellow);
                     break;
 			}
 			
@@ -571,8 +601,9 @@ namespace DevcadeGame
 
             sb.DrawString(
                 smallFont,
-                $"Pause",
-                new Vector2(windowWidth * 0.88f, windowHeight * 0.95f),
+                $"Pause/" +
+                $"\nStart",
+                new Vector2(windowWidth * 0.88f, windowHeight * 0.942f),
                 Color.LightGoldenrodYellow);
         }
     }
