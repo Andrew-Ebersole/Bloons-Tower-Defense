@@ -392,7 +392,19 @@ namespace DevcadeGame
                         new Vector2(windowWidth * 0.20f, windowHeight * 0.52f),
 						menuColor[2]);
 
-                    break;
+                    _spriteBatch.Draw(buttonIcon,
+                new Rectangle((int)(windowWidth * 0.80f), (int)(windowHeight * 0.94f),
+                (int)(windowHeight * 0.03f), (int)(windowHeight * 0.03f)),
+                Color.Purple);
+
+                    _spriteBatch.DrawString(
+                        smallFont,
+                        $"Pause/" +
+                        $"\nStart",
+                        new Vector2(windowWidth * 0.88f, windowHeight * 0.942f),
+                        Color.LightGoldenrodYellow);
+
+            break;
 
 				case GameState.Game:
 					// Call the manager
@@ -524,8 +536,8 @@ namespace DevcadeGame
 
             sb.DrawString(
                 smallFont,
-                $"Dart",
-                new Vector2(windowWidth * 0.13f, windowHeight * 0.91f),
+                $"Dart\n200",
+                new Vector2(windowWidth * 0.13f, windowHeight * 0.90f),
                 Color.LightGoldenrodYellow);
 
             sb.Draw(buttonIcon,
@@ -535,8 +547,8 @@ namespace DevcadeGame
 
             sb.DrawString(
                 smallFont,
-                $"Tack ",
-                new Vector2(windowWidth * 0.38f, windowHeight * 0.91f),
+                $"Tack\n280",
+                new Vector2(windowWidth * 0.38f, windowHeight * 0.90f),
                 Color.LightGoldenrodYellow);
 
             sb.Draw(buttonIcon,
@@ -546,8 +558,8 @@ namespace DevcadeGame
 
             sb.DrawString(
                 smallFont,
-                $"Sniper",
-                new Vector2(windowWidth * 0.63f, windowHeight * 0.91f),
+                $"Sniper\n350",
+                new Vector2(windowWidth * 0.63f, windowHeight * 0.90f),
                 Color.LightGoldenrodYellow);
 
             sb.Draw(buttonIcon,
@@ -557,8 +569,8 @@ namespace DevcadeGame
 
             sb.DrawString(
                 smallFont,
-                $"Super ",
-                new Vector2(windowWidth * 0.88f, windowHeight * 0.91f),
+                $"Super\n2500",
+                new Vector2(windowWidth * 0.88f, windowHeight * 0.90f),
                 Color.LightGoldenrodYellow);
 
             sb.Draw(buttonIcon,
