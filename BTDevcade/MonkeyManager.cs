@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.ComponentModel;
 using System.Security.Cryptography.X509Certificates;
 using BTDevcade;
+using Devcade;
 
 namespace DevcadeGame
 {
@@ -53,7 +54,7 @@ internal class MonkeyManager
 
         // Collision Grid
         private bool[,] canPlace;
-
+         
         // --- Properties --- //
 
 
@@ -97,7 +98,6 @@ internal class MonkeyManager
         public void Update(GameTime gt, Rectangle windowDimensions, int money, List<Balloons> balloons, float gameSpeed)
         {
             currentKS = Keyboard.GetState();
-
             foreach(Monkey m in monkeys)
             {
                 m.Update(gt, windowDimensions, balloons, gameSpeed);
@@ -107,25 +107,29 @@ internal class MonkeyManager
                 case GameState.Passive:
 
                     // Place monkey if you have enough money
-                    if (SingleKeyPress(Keys.Q)
+                    if ((SingleKeyPress(Keys.Q)
+                        || Input.GetButton(1, Input.ArcadeButtons.A1))
                         && money >= 200)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Dart;
                     }
-                    if (SingleKeyPress(Keys.E)
+                    if ((SingleKeyPress(Keys.E) 
+                        || Input.GetButton(1, Input.ArcadeButtons.A4))
                         && money >= 2500)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Super;
                     }
-                    if (SingleKeyPress(Keys.R)
+                    if ((SingleKeyPress(Keys.R) 
+                        || Input.GetButton(1, Input.ArcadeButtons.A3))
                         && money >= 350)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Sniper;
                     }
-                    if (SingleKeyPress(Keys.T)
+                    if ((SingleKeyPress(Keys.T) 
+                        || Input.GetButton(1, Input.ArcadeButtons.A2))
                         && money >= 280)
                     {
                         gameState = GameState.Place;
@@ -133,7 +137,8 @@ internal class MonkeyManager
                     }
 
                     // View range and upgrades
-                    if (SingleKeyPress(Keys.Right))
+                    if (SingleKeyPress(Keys.Right) 
+                        || Input.GetButton(1, Input.ArcadeButtons.StickRight))
                     {
                         gameState = GameState.Upgrade;
                         selectedMonkey = 0;
@@ -196,8 +201,8 @@ internal class MonkeyManager
                                         (int)(OverlayPos.Y * tileSize + tileSize * 0.45f),   // Y
                                         (int)(tileSize * 1f),                     // Width
                                         (int)(tileSize * 1f),                     // Height
-                                        2,                  // Damage
-                                        0.679f,                  // Attack Speed
+                                        1,                  // Damage
+                                        0.679f,                  // Attack Speed 0.679f
                                         (int)(1.4375f * tileSize),// Range
                                         280,                // Cost
                                         1,                  // Pierce
@@ -286,11 +291,13 @@ internal class MonkeyManager
                 case GameState.Upgrade:
 
                     // Change monkey that is selected
-                    if (SingleKeyPress(Keys.Left))
+                    if (SingleKeyPress(Keys.Left) 
+                        || Input.GetButton(1, Input.ArcadeButtons.StickLeft))
                     {
                         selectedMonkey--;
                     }
-                    if (SingleKeyPress(Keys.Right) 
+                    if ((SingleKeyPress(Keys.Right) 
+                        || Input.GetButton(1, Input.ArcadeButtons.StickRight)) 
                         && selectedMonkey < monkeys.Count)
                     {
                         selectedMonkey++;
@@ -299,8 +306,15 @@ internal class MonkeyManager
                     {
                         selectedMonkey = 0;
                     }
+                    if (selectedMonkey < 0)
+                    {
+                        selectedMonkey = monkeys.Count - 1;
+                    }
                     // Exit selected monkey viewing mode
-                    if (selectedMonkey == -1)
+                    if (SingleKeyPress(Keys.Up)
+                        || SingleKeyPress(Keys.Down)
+                        || Input.GetButton(1, Input.ArcadeButtons.StickUp)
+                        || Input.GetButton(1, Input.ArcadeButtons.StickDown))
                     {
                         gameState = GameState.Passive;
                     }
@@ -344,22 +358,26 @@ internal class MonkeyManager
         public void MoveOverlay()
         {
             // Change position or sum
-            if (SingleKeyPress(Keys.W)
+            if ((SingleKeyPress(Keys.W)
+                || Input.GetButton(1, Input.ArcadeButtons.StickUp))
                 && OverlayPos.Y > 0)
             {
                 OverlayPos.Y -= 1;
             }
-            if (SingleKeyPress(Keys.A)
+            if ((SingleKeyPress(Keys.A)
+                || Input.GetButton(1, Input.ArcadeButtons.StickLeft))
                 && OverlayPos.X > 0)
             {
                 OverlayPos.X -= 1;
             }
-            if (SingleKeyPress(Keys.S)
+            if ((SingleKeyPress(Keys.S) 
+                || Input.GetButton(1, Input.ArcadeButtons.StickDown))
                 && OverlayPos.Y < 27)
             {
                 OverlayPos.Y += 1;
             }
-            if (SingleKeyPress(Keys.D)
+            if ((SingleKeyPress(Keys.D) 
+                || Input.GetButton(1, Input.ArcadeButtons.StickRight))
                 && OverlayPos.X < 11)
             {
                 OverlayPos.X += 1;

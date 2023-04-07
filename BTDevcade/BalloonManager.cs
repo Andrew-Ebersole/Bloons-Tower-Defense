@@ -36,6 +36,7 @@ namespace DevcadeGame
         private double spawnTimer;
         private int round;
         private bool endRoundRewardGiven;
+        private bool didPop;
 
 
         // --- Properties --- //
@@ -78,6 +79,7 @@ namespace DevcadeGame
             previousKB = new KeyboardState();
             currentKB = new KeyboardState();
             LoadRounds();
+            didPop = false;
         }
 
 
@@ -91,6 +93,7 @@ namespace DevcadeGame
         /// <param name="window"> dimensions of the screen </param>
         public void Update(GameTime gt, Rectangle window, float gameSpeed, float sfxVolume)
         {
+            didPop = false;
             //Keyboard input
             currentKB = Keyboard.GetState();
 
@@ -190,11 +193,12 @@ namespace DevcadeGame
             List<Balloons> poppedBalloons = new List<Balloons>();
             foreach (Balloons b in balloons)
             {
-                b.Update(gt, window, gameSpeed, sfxVolume);
+                b.Update(gt, window, gameSpeed, sfxVolume, balloons.Count);
                 if (b.Health <= 0)
                 {
                     poppedBalloons.Add(b);
                 }
+                // Only play pop sound effect once when two balloons are popped at the same time
             }
 
             // Remove Popped Balloons
