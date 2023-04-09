@@ -108,28 +108,28 @@ internal class MonkeyManager
 
                     // Place monkey if you have enough money
                     if ((SingleKeyPress(Keys.Q)
-                        || Input.GetButton(1, Input.ArcadeButtons.A1))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.A1))
                         && money >= 200)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Dart;
                     }
                     if ((SingleKeyPress(Keys.E) 
-                        || Input.GetButton(1, Input.ArcadeButtons.A4))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.A4))
                         && money >= 2500)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Super;
                     }
                     if ((SingleKeyPress(Keys.R) 
-                        || Input.GetButton(1, Input.ArcadeButtons.A3))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.A3))
                         && money >= 350)
                     {
                         gameState = GameState.Place;
                         monkeyType = PlaceMonkeyType.Sniper;
                     }
                     if ((SingleKeyPress(Keys.T) 
-                        || Input.GetButton(1, Input.ArcadeButtons.A2))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.A2))
                         && money >= 280)
                     {
                         gameState = GameState.Place;
@@ -138,7 +138,7 @@ internal class MonkeyManager
 
                     // View range and upgrades
                     if (SingleKeyPress(Keys.Right) 
-                        || Input.GetButton(1, Input.ArcadeButtons.StickRight))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickRight))
                     {
                         gameState = GameState.Upgrade;
                         selectedMonkey = 0;
@@ -157,7 +157,7 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter)
+                                if ((SingleKeyPress(Keys.Enter) || Input.GetButtonDown(1,Input.ArcadeButtons.B3))
                                     && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
@@ -292,12 +292,12 @@ internal class MonkeyManager
 
                     // Change monkey that is selected
                     if (SingleKeyPress(Keys.Left) 
-                        || Input.GetButton(1, Input.ArcadeButtons.StickLeft))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickLeft))
                     {
                         selectedMonkey--;
                     }
                     if ((SingleKeyPress(Keys.Right) 
-                        || Input.GetButton(1, Input.ArcadeButtons.StickRight)) 
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickRight)) 
                         && selectedMonkey < monkeys.Count)
                     {
                         selectedMonkey++;
@@ -313,8 +313,8 @@ internal class MonkeyManager
                     // Exit selected monkey viewing mode
                     if (SingleKeyPress(Keys.Up)
                         || SingleKeyPress(Keys.Down)
-                        || Input.GetButton(1, Input.ArcadeButtons.StickUp)
-                        || Input.GetButton(1, Input.ArcadeButtons.StickDown))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickUp)
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickDown))
                     {
                         gameState = GameState.Passive;
                     }
@@ -359,25 +359,25 @@ internal class MonkeyManager
         {
             // Change position or sum
             if ((SingleKeyPress(Keys.W)
-                || Input.GetButton(1, Input.ArcadeButtons.StickUp))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.StickUp))
                 && OverlayPos.Y > 0)
             {
                 OverlayPos.Y -= 1;
             }
             if ((SingleKeyPress(Keys.A)
-                || Input.GetButton(1, Input.ArcadeButtons.StickLeft))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.StickLeft))
                 && OverlayPos.X > 0)
             {
                 OverlayPos.X -= 1;
             }
             if ((SingleKeyPress(Keys.S) 
-                || Input.GetButton(1, Input.ArcadeButtons.StickDown))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.StickDown))
                 && OverlayPos.Y < 27)
             {
                 OverlayPos.Y += 1;
             }
             if ((SingleKeyPress(Keys.D) 
-                || Input.GetButton(1, Input.ArcadeButtons.StickRight))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.StickRight))
                 && OverlayPos.X < 11)
             {
                 OverlayPos.X += 1;

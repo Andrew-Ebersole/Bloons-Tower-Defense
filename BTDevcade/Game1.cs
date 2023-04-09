@@ -205,7 +205,7 @@ namespace DevcadeGame
 
             // Toggle auto start round
             if (singleKeyPress(Keys.Y)
-                || Input.GetButton(1, Input.ArcadeButtons.B2))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.B2))
 			{
 				if (autoStartRound)
 				{
@@ -217,7 +217,7 @@ namespace DevcadeGame
 			}
 			// Toggle 2X speed
 			if (singleKeyPress(Keys.I)
-                || Input.GetButton(1, Input.ArcadeButtons.B1))
+                || Input.GetButtonDown(1, Input.ArcadeButtons.B1))
 			{
 				gameSpeed = (gameSpeed % 2) + 1;
 			} 
@@ -229,13 +229,13 @@ namespace DevcadeGame
 					
 					// Update selector
 					if ((singleKeyPress(Keys.Down)
-                        || Input.GetButton(1, Input.ArcadeButtons.StickDown))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickDown))
 						&& menuSelector < 2)
 					{
 						menuSelector++;
 					}
 					if ((singleKeyPress(Keys.Up)
-                        || Input.GetButton(1, Input.ArcadeButtons.StickUp))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.StickUp))
 						&& menuSelector > 0)
 					{
 						menuSelector--;
@@ -253,7 +253,7 @@ namespace DevcadeGame
 					{
 						case 0:
 							if (singleKeyPress(Keys.Enter)
-                                || Input.GetButton(1, Input.ArcadeButtons.B4))
+                                || Input.GetButtonDown(1, Input.ArcadeButtons.B4))
 							{
 								gameState = GameState.Game;
 								StartGame();
@@ -262,13 +262,13 @@ namespace DevcadeGame
 
 						case 1:
 							if ((singleKeyPress(Keys.Left)
-                                || Input.GetButton(1, Input.ArcadeButtons.StickLeft))
+                                || Input.GetButtonDown(1, Input.ArcadeButtons.StickLeft))
                                 && sfxVolume > 0)
 							{
 								sfxVolume--;
 							}
 							if ((singleKeyPress(Keys.Right)
-                                || Input.GetButton(1, Input.ArcadeButtons.StickRight))
+                                || Input.GetButtonDown(1, Input.ArcadeButtons.StickRight))
                                 && sfxVolume < 10)
                             {
                                 sfxVolume++;
@@ -277,13 +277,13 @@ namespace DevcadeGame
 
 						case 2:
                             if ((singleKeyPress(Keys.Left) 
-								|| Input.GetButton(1, Input.ArcadeButtons.StickLeft))
+								|| Input.GetButtonDown(1, Input.ArcadeButtons.StickLeft))
                                 && musicVolume > 0)
                             {
                                 musicVolume--;
                             }
                             if ((singleKeyPress(Keys.Right) 
-								|| Input.GetButton(1, Input.ArcadeButtons.StickRight))
+								|| Input.GetButtonDown(1, Input.ArcadeButtons.StickRight))
                                 && musicVolume < 10)
                             {
                                 musicVolume++;
@@ -302,12 +302,12 @@ namespace DevcadeGame
 						gameState = GameState.GameOver;
 					}
                     if (singleKeyPress(Keys.Space)
-                        || Input.GetButton(1, Input.ArcadeButtons.Menu))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.Menu))
                     {
                         gameState = GameState.GameOver;
                     }
                     if ((singleKeyPress(Keys.K)
-                        || Input.GetButton(1, Input.ArcadeButtons.B3))
+                        || Input.GetButtonDown(1, Input.ArcadeButtons.B4))
                         && !balloonManager.RoundEnded)
                     {
                         if (gameSpeed > 0)
@@ -321,7 +321,7 @@ namespace DevcadeGame
                     }
                     if (balloonManager.RoundEnded
 						&& ((singleKeyPress(Keys.M)
-						|| Input.GetButton(1, Input.ArcadeButtons.B4))
+						|| Input.GetButtonDown(1, Input.ArcadeButtons.B4))
 						|| autoStartRound))
 					{
 						round++;
@@ -340,7 +340,7 @@ namespace DevcadeGame
 
 				case GameState.GameOver:
                     if (singleKeyPress(Keys.Enter) 
-						|| Input.GetButton(1, Input.ArcadeButtons.B4))
+						|| Input.GetButtonDown(1, Input.ArcadeButtons.B4))
                     {
                         gameState = GameState.Menu;
                     }
