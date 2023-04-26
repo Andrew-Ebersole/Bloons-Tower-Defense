@@ -175,8 +175,8 @@ internal class MonkeyManager
                                         200,                // Cost
                                         2,                  // Pierce
                                         balloons,           // Balloons list
-                                        new Vector2((int)(tileSize * 0.9f) * 1.5f, // Orgin X
-                                        (int)(tileSize * 0.9f) * 2.0f)));         // Orgin Y
+                                        new Vector2((int)(towerTextures[0].Width * 0.5f), // Orgin X
+                                        (int)(towerTextures[0].Height *0.75f))));         // Orgin Y
                                     buyTower(200);
                                     canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
                                 }
@@ -189,7 +189,7 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter)
+                                if ((SingleKeyPress(Keys.Enter) || Input.GetButtonDown(1, Input.ArcadeButtons.B3))
                                     && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
@@ -197,8 +197,8 @@ internal class MonkeyManager
                                         towerTextures[1],  // Monkey Texutre
                                         circle,         // Range Circle texture
                                         dart,           // Projectile Texture
-                                        (int)(OverlayPos.X * tileSize + tileSize * 0.45f),   // X
-                                        (int)(OverlayPos.Y * tileSize + tileSize * 0.45f),   // Y
+                                        (int)(OverlayPos.X * tileSize + tileSize * 0.5f),   // X
+                                        (int)(OverlayPos.Y * tileSize + tileSize * 0.5f),   // Y
                                         (int)(tileSize * 1f),                     // Width
                                         (int)(tileSize * 1f),                     // Height
                                         1,                  // Damage
@@ -207,8 +207,8 @@ internal class MonkeyManager
                                         280,                // Cost
                                         1,                  // Pierce
                                         balloons,           // Balloons list
-                                        new Vector2((int)(tileSize * 1f) * 1.0f, // Orgin X
-                                        (int)(tileSize * 1f) * 1.0f)));         // Orgin Y
+                                        new Vector2((int)(towerTextures[0].Width * 0.5f), // Orgin X
+                                        (int)(towerTextures[0].Height * 0.5f))));         // Orgin Y
                                     buyTower(280);
                                     canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
                                 }
@@ -221,7 +221,7 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter)
+                                if ((SingleKeyPress(Keys.Enter) || Input.GetButtonDown(1, Input.ArcadeButtons.B3))
                                     && canPlace[(int)OverlayPos.X, (int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
@@ -239,8 +239,8 @@ internal class MonkeyManager
                                         350,                // Cost
                                         1,                  // Pierce
                                         balloons,           // Balloons list
-                                        new Vector2((int)(tileSize * 1f) * 1.0f, // Orgin X
-                                        (int)(tileSize * 1.5f) * 1.0f)));         // Orgin Y
+                                        new Vector2((int)(towerTextures[0].Width * 0.5f), // Orgin X
+                                        (int)(towerTextures[0].Height * 0.5f))));         // Orgin Y
                                     buyTower(350);
                                     canPlace[(int)OverlayPos.X, (int)OverlayPos.Y] = false;
                                 }
@@ -253,7 +253,7 @@ internal class MonkeyManager
                                 MoveOverlay();
 
                                 // Place monkey
-                                if (SingleKeyPress(Keys.Enter)
+                                if ((SingleKeyPress(Keys.Enter) || Input.GetButtonDown(1, Input.ArcadeButtons.B3))
                                     && canPlace[(int)OverlayPos.X,(int)OverlayPos.Y])
                                 {
                                     gameState = GameState.Passive;
@@ -271,8 +271,8 @@ internal class MonkeyManager
                                         2500,                // Cost
                                         1,                  // Pierce
                                         balloons,           // Balloons list
-                                        new Vector2 ((int)(tileSize * 0.9f) * 1.0f, // Orgin X
-                                        (int)(tileSize * 0.9f) * 1.0f)));         // Orgin Y
+                                        new Vector2 ((int)(towerTextures[0].Width * 0.5f), // Orgin X
+                                        (int)(towerTextures[0].Height * 0.5f))));         // Orgin Y
                                     buyTower(2500);
                                     canPlace[(int)OverlayPos.X,(int)OverlayPos.Y] = false;
                                 }
@@ -281,7 +281,7 @@ internal class MonkeyManager
                     }
                     
                     // Cancel purchase
-                    if (SingleKeyPress(Keys.Left))
+                    if (SingleKeyPress(Keys.Left) || Input.GetButtonDown(1, Input.ArcadeButtons.B4))
                     {
                         gameState = GameState.Passive;
                     }
@@ -318,8 +318,7 @@ internal class MonkeyManager
                     {
                         gameState = GameState.Passive;
                     }
-                    break;
-                    
+                    break;       
             }
             
             previousKS = currentKS;
